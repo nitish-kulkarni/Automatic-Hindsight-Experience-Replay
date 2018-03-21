@@ -458,7 +458,7 @@ class DDPGAgent:
 
         if evaluate:
             self.plotter.test_rewards_intermediate.append(avg_reward)
-            self.plotter.test_successrate_intermediate(success_rate)
+            self.plotter.test_successrate_intermediate.append(success_rate)
         else:
             self.plotter.test_rewards_final = (avg_reward, std_reward)
             self.plotter.test_successrate_final = success_rate
