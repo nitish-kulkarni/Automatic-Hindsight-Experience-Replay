@@ -235,7 +235,7 @@ def burn_in_memory(env, env_name, max_memory_size, burn_in):
     itr = 0
 
     while itr < burn_in:
-        if itr % 1000 == 0:
+        if itr % 10000 == 0:
             print("Burn in iteration: ", itr)
         state, goal, _ = episode.reset()
         done = False
