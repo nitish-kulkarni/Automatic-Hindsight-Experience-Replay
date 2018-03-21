@@ -363,7 +363,7 @@ class DDPGAgent:
             # Evaluate
             monitor_dir = os.path.join(self.monitor_base_dir, str(epoch))
             if epoch in vid_ckpts_iter:
-                save_vid = True
+                save_vid = False
             avg_reward = self.test(monitor_dir, save_vid=save_vid)
             if save_vid:
                 save_vid = False
@@ -373,7 +373,8 @@ class DDPGAgent:
             self.qnet.save_model()
             self.policynet.save_model()
 
-            for _ in range(self.num_cycles):
+            for cycle in range(self.num_cycles):
+                print("Cycle: ", cycle)
                 # Update Target Networks (Q-network and Policy-network)
                 self.sess.run(self.update_targetqnet)
                 self.sess.run(self.update_targetpolicynet)
@@ -400,6 +401,7 @@ class DDPGAgent:
                             replay_memory.append(_transition(state, action, substitute_reward, next_state, done, substitute_goal))
 
                 for updates in range(self.max_updates):
+                    print("Update: ", updates)
                     samples = replay_memory.sample_batch(batch_size=self.minibatch_size)
                     self.policynet.update(samples, self.lr_actor, self.qnet, save_graph=save_graph)
                     self.qnet.update(samples, self.lr_critic, self.target_qnet, self.target_policynet, save_graph=save_graph)
@@ -481,7 +483,7 @@ def _validate_args(args):
 
 
 def _base_path(args):
-    return '%s' % args.env
+    return '%s_%s' % (args.env, args.her)
 
 
 def parse_arguments():
@@ -496,8 +498,8 @@ def parse_arguments():
     parser.add_argument('--num_episodes', dest='num_episodes', type=int, default=4)
     parser.add_argument('--max_updates', dest='max_updates', type=int, default=40)
 
-    parser.add_argument('--num_eval', dest='num_eval', type=int, default=20)
-    parser.add_argument('--num_test', dest='num_test', type=int, default=100)
+    parser.add_argument('--num_eval', dest='num_eval', type=int, default=10)
+    parser.add_argument('--num_test', dest='num_test', type=int, default=10)
     parser.add_argument('--epsilon0_train', dest='epsilon0_train', type=float, default=0.2)
     parser.add_argument('--epsilon0_test', dest='epsilon0_test', type=float, default=0.05)
 
@@ -510,7 +512,7 @@ def parse_arguments():
     parser.add_argument('--plot_only', dest='plot_only', type=int, default=0)
     parser.add_argument('--plot_file_name', dest='plot_file_name')
     parser.add_argument('--hidden', dest='hidden', type=int, default=64)
-    parser.add_argument('--replay_memory_size', dest='replay_memory_size', type=int, default=1000000)
+    parser.add_argument('--replay_memory_size', dest='replay_memory_size', type=int, default=100000)
 
     parser.add_argument('--her', dest='her', type=int, default=1)
 
