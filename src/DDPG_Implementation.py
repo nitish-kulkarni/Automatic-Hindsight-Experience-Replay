@@ -475,7 +475,7 @@ def parse_arguments():
     parser.add_argument('--train', dest='train', type=int, default=1)
     parser.add_argument('--model_file', dest='model_file', type=str)
 
-    parser.add_argument('--num_epochs', dest='num_epochs', type=int, default=50)
+    parser.add_argument('--num_epochs', dest='num_epochs', type=int, default=20)
     parser.add_argument('--num_cycles', dest='num_cycles', type=int, default=25)
     parser.add_argument('--num_episodes', dest='num_episodes', type=int, default=4)
     parser.add_argument('--max_updates', dest='max_updates', type=int, default=40)
@@ -493,7 +493,7 @@ def parse_arguments():
 
     parser.add_argument('--plot_only', dest='plot_only', type=int, default=0)
     parser.add_argument('--plot_file_name', dest='plot_file_name')
-    parser.add_argument('--hidden', dest='hidden', type=int, default=256)
+    parser.add_argument('--hidden', dest='hidden', type=int, default=64)
     parser.add_argument('--replay_memory_size', dest='replay_memory_size', type=int, default=1000000)
 
     return parser.parse_args()
