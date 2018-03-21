@@ -23,7 +23,7 @@ random.seed(seed)
 class PolicyNetwork:
     """Actor Network class. Input: state. Output: action (continuous)"""
 
-    def __init__(self, param, scope='PolicyNetwork', h=None):
+    def __init__(self, param, scope='PolicyNetwork'):
         self.dim_s = param['dim_s']
         self.dim_a = param['dim_a']
         self.gamma = param['gamma']
@@ -32,7 +32,6 @@ class PolicyNetwork:
         self.model_dir = '%s_%s' % (param['model_dir'], scope)
         self.scope = scope
         self.h = param['h']
-        self.minibatch_size = param['minibatch_size']
 
         # All placeholders
         self.s = None
@@ -41,7 +40,7 @@ class PolicyNetwork:
 
         # Derived tensors
         self.mu = None
-        self.update_op = None
+        self.train_op = None
         self.summaries = None
 
         self.global_step_tensor = tf.Variable(0, trainable=False, name='global_step')
@@ -65,20 +64,7 @@ class PolicyNetwork:
 
         trainable_vars = tf.trainable_variables(scope=self.scope)
         mu_grad = tf.gradients(ys=self.mu, xs=trainable_vars, grad_ys=-self.q_grad)
-        self.update_op = tf.train.AdamOptimizer(learning_rate=self.lr).apply_gradients(zip(mu_grad, trainable_vars))
-        # n_trainable_vars = len(trainable_vars)
-        # mu_grad = tf.Variable(initial_value=tf.zeros([self.minibatch_size, self.dim_a, n_trainable_vars]), name='mu_grad', validate_shape=False)
-        # final_grad = tf.Variable(initial_value=tf.zeros([n_trainable_vars]), name='final_grad', validate_shape=False)
-        #
-        # for i in range(self.minibatch_size):
-        #     for j in range(self.dim_a):
-        #         mu_grad[i][j] = tf.gradients(self.mu[i][j], trainable_vars)
-        #
-        # for i in range(self.minibatch_size):
-        #     final_grad += tf.matmul(self.q_grad[i], tf.reshape(mu_grad[i], (self.dim_a, n_trainable_vars)))
-        # final_grad /= self.minibatch_size
-        #
-        # self.update_op = trainable_vars.assign_sub(self.lr * final_grad)
+        self.train_op = tf.train.AdamOptimizer(learning_rate=self.lr).apply_gradients(zip(mu_grad, trainable_vars))
 
     def save_model(self):
         global_step = tf.train.global_step(self.sess, self.global_step_tensor)
@@ -97,15 +83,12 @@ class PolicyNetwork:
             return mu
 
     def update(self, samples, lr, qnet, save_graph=False):
-        global_step = tf.train.global_step(self.sess, self.global_step_tensor)
         state, action, reward, next_state, done = zip(*samples)
         mu = self.predict(state)
         q_grad = qnet.get_q_grad(state, mu)
 
         feed_dict = {self.s: state, self.lr: lr, self.q_grad: q_grad}
-        self.sess.run([self.update_op], feed_dict=feed_dict)
-
-        self.global_step_tensor.assign_add(1)
+        self.sess.run([self.train_op], feed_dict=feed_dict)
 
         if save_graph:
             self.summary_writer.add_graph(self.sess.graph)
@@ -123,7 +106,6 @@ class QNetwork:
         self.model_dir = '%s_%s' % (param['model_dir'], scope)
         self.scope = scope
         self.h = param['h']
-        self.minibatch_size = param['minibatch_size']
 
         # All placeholders
         self.s = None
@@ -158,10 +140,6 @@ class QNetwork:
             x = tf.layers.dense(x, self.h, activation=tf.nn.relu, kernel_regularizer=regularizer)
 
         self.q = tf.layers.dense(x, 1, kernel_regularizer=regularizer)
-
-        # self.q_grad = tf.Variable(initial_value=tf.zeros([self.minibatch_size, self.dim_a]), name='q_grad', validate_shape=False)
-        # for i in range(self.minibatch_size):
-        #     self.q_grad[i] = tf.gradients(self.q[i], self.a)
         self.q_grad = tf.gradients(self.q, self.a)
 
         self.loss = tf.losses.mean_squared_error(self.q_target, self.q)
@@ -212,17 +190,11 @@ class ReplayMemory:
         self.N = len(self.memory)
 
     def sample_batch(self, batch_size=32):
-        # This function returns a batch of randomly sampled transitions -
-        # i.e. state, action, reward, next state, terminal flag tuples.
-        # You will feed this to your model to train.
         return self.memory if self.N <= batch_size else self.memory[np.random.randint(0, self.N, batch_size)]
 
     def append(self, transition):
-        # Appends transition to the memory.
         new_sample = [transition]
         if self.N < self.max_memory_size:
-            # print("Memory shape: ", len(self.memory))
-            # print("New sample: ", new_sample)
             self.memory = np.concatenate([self.memory, new_sample])
             self.N += 1
         else:
@@ -264,7 +236,7 @@ def burn_in_memory(env, env_name, max_memory_size, burn_in):
 
     while itr < burn_in:
         if itr % 1000 == 0:
-            print(itr)
+            print("Burn in iteration: ", itr)
         state, goal, _ = episode.reset()
         done = False
         while not done:
@@ -283,7 +255,6 @@ class Plotter:
         self.env_name = env_name
         self.plot_dir = plot_dir
 
-        # Rewards
         self.test_rewards_intermediate = []
         self.test_rewards_final = []
 
@@ -338,7 +309,6 @@ class DDPGAgent:
         param_net = self.get_param_net(param)
         self.qnet = QNetwork(param_net, scope='QNetwork')
         self.target_qnet = QNetwork(param_net, scope='TargetQNetwork')
-        param_net = self.get_param_net(param)
         self.policynet = PolicyNetwork(param_net, scope='PolicyNetwork')
         self.target_policynet = PolicyNetwork(param_net, scope='TargetPolicyNetwork')
 
@@ -356,7 +326,6 @@ class DDPGAgent:
         param['tf_summary_dir'] = param_agent['tf_summary_dir']
         param['h'] = param_agent['h']
         param['gamma'] = param_agent['gamma']
-        param['minibatch_size'] = param_agent['minibatch_size']
         return param
 
     def epsilon_greedy_policy(self, state, epsilon):
@@ -385,23 +354,23 @@ class DDPGAgent:
         for epoch in range(self.num_epochs):
             print("Epoch: ", epoch)
 
+            # Evaluate
+            monitor_dir = os.path.join(self.monitor_base_dir, str(epoch))
+            if epoch in vid_ckpts_iter:
+                save_vid = True
+            avg_reward = self.test(monitor_dir, save_vid=False)
+            if save_vid:
+                save_vid = False
+            print("Average reward: ", avg_reward)
+
+            # Save models
+            self.qnet.save_model()
+            self.policynet.save_model()
+
             for _ in range(self.num_cycles):
                 # Update Target Networks (Q-network and Policy-network)
                 self.sess.run(self.update_targetqnet)
                 self.sess.run(self.update_targetpolicynet)
-
-                # Evaluate
-                monitor_dir = os.path.join(self.monitor_base_dir, str(epoch))
-                if epoch in vid_ckpts_iter:
-                    save_vid = True
-                avg_reward = self.test(monitor_dir, save_vid=False)
-                if save_vid:
-                    save_vid = False
-                print("Average reward: ", avg_reward)
-
-                # Save models
-                self.qnet.save_model()
-                self.policynet.save_model()
 
                 for _ in range(self.num_episodes):
                     state, goal, transition_store = episode.reset()
@@ -478,9 +447,9 @@ def _concat(state, goal):
 
 
 def _random_action(env):
-    a_hi = env.action_space.high
     a_lo = env.action_space.low
-    return np.random.uniform(a_hi, a_lo)
+    a_hi = env.action_space.high
+    return np.random.uniform(a_lo, a_hi)
 
 
 def _random_noise(env, stdev):
@@ -488,11 +457,6 @@ def _random_noise(env, stdev):
     a_hi = action_space.high
     a_lo = action_space.low
     return np.random.normal(np.zeros(action_space.shape[0]), stdev * (a_hi - a_lo))
-
-# Evaluate the performance of your agent over 100 episodes,
-# by calculating cummulative rewards for the 100 episodes.
-# Here you need to interact with the environment, irrespective of whether
-#  you are using a memory.
 
 
 def _validate_args(args):
@@ -505,37 +469,32 @@ def _base_path(args):
 
 
 def parse_arguments():
-    parser = argparse.ArgumentParser(description='DDPG with HER Argument '
-                                                 'Parser')
+    parser = argparse.ArgumentParser(description='DDPG with HER Argument Parser')
     parser.add_argument('--env', dest='env', type=str, default='FetchReach-v0')
     parser.add_argument('--render', dest='render', type=int, default=0)
     parser.add_argument('--train', dest='train', type=int, default=1)
     parser.add_argument('--model_file', dest='model_file', type=str)
 
     parser.add_argument('--num_epochs', dest='num_epochs', type=int, default=50)
-    parser.add_argument('--num_cycles', dest='num_cycles', type=int, default=50)
-    parser.add_argument('--num_episodes', dest='num_episodes', type=int, default=16)
-    parser.add_argument('--max_updates', dest='max_updates', type=int,
-                        default=40)
+    parser.add_argument('--num_cycles', dest='num_cycles', type=int, default=25)
+    parser.add_argument('--num_episodes', dest='num_episodes', type=int, default=4)
+    parser.add_argument('--max_updates', dest='max_updates', type=int, default=40)
 
-    parser.add_argument('--num_eval', dest='num_eval', type=int, default=1)
+    parser.add_argument('--num_eval', dest='num_eval', type=int, default=20)
     parser.add_argument('--num_test', dest='num_test', type=int, default=100)
-    parser.add_argument('--epsilon0_train', dest='epsilon0_train',
-                        type=float, default=0.2)
+    parser.add_argument('--epsilon0_train', dest='epsilon0_train', type=float, default=0.2)
     parser.add_argument('--epsilon0_test', dest='epsilon0_test', type=float, default=0.05)
 
     parser.add_argument('--stdev_noise', dest='stdev_noise', type=float, default=0.05)
     parser.add_argument('--gamma', dest='gamma', type=float, default=0.99)
     parser.add_argument('--lr_actor', dest='lr_actor', type=float, default=1e-3)
     parser.add_argument('--lr_critic', dest='lr_critic', type=float, default=1e-3)
-    parser.add_argument('--minibatch_size', dest='minibatch_size', type=int,
-                        default=128)
+    parser.add_argument('--minibatch_size', dest='minibatch_size', type=int, default=128)
 
     parser.add_argument('--plot_only', dest='plot_only', type=int, default=0)
     parser.add_argument('--plot_file_name', dest='plot_file_name')
-    parser.add_argument('--hidden', dest='hidden', type=int, default=64)
-    parser.add_argument('--replay_memory_size', dest='replay_memory_size',
-                        type=int, default=10000)
+    parser.add_argument('--hidden', dest='hidden', type=int, default=256)
+    parser.add_argument('--replay_memory_size', dest='replay_memory_size', type=int, default=1000000)
 
     return parser.parse_args()
 
@@ -571,6 +530,7 @@ def main(args):
         os.makedirs(path)
 
     param_agent = {}
+    pass
     param_agent['render'] = args.render
 
     param_agent['num_epochs'] = args.num_epochs
