@@ -494,7 +494,7 @@ def parse_arguments():
     parser.add_argument('--plot_only', dest='plot_only', type=int, default=0)
     parser.add_argument('--plot_file_name', dest='plot_file_name')
     parser.add_argument('--hidden', dest='hidden', type=int, default=256)
-    parser.add_argument('--replay_memory_size', dest='replay_memory_size', type=int, default=10000)
+    parser.add_argument('--replay_memory_size', dest='replay_memory_size', type=int, default=1000000)
 
     return parser.parse_args()
 
