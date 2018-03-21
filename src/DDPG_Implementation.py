@@ -358,7 +358,7 @@ class DDPGAgent:
             monitor_dir = os.path.join(self.monitor_base_dir, str(epoch))
             if epoch in vid_ckpts_iter:
                 save_vid = True
-            avg_reward = self.test(monitor_dir, save_vid=False)
+            avg_reward = self.test(monitor_dir, save_vid=save_vid)
             if save_vid:
                 save_vid = False
             print("Average reward: ", avg_reward)
@@ -413,7 +413,7 @@ class DDPGAgent:
                 action = self.epsilon_greedy_policy(episode.state_rep, self.epsilon0_test)
                 if save_vid:
                     env.render()
-                _, reward, _, done, _ = episode.step(action)
+                _, reward, done, _, _ = episode.step(action)
                 total_reward += reward
             all_rewards.append(total_reward)
         episode.close()
@@ -494,7 +494,7 @@ def parse_arguments():
     parser.add_argument('--plot_only', dest='plot_only', type=int, default=0)
     parser.add_argument('--plot_file_name', dest='plot_file_name')
     parser.add_argument('--hidden', dest='hidden', type=int, default=256)
-    parser.add_argument('--replay_memory_size', dest='replay_memory_size', type=int, default=1000000)
+    parser.add_argument('--replay_memory_size', dest='replay_memory_size', type=int, default=10000)
 
     return parser.parse_args()
 
