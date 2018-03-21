@@ -396,7 +396,7 @@ class DDPGAgent:
                         substitute_goal = self.substitute_goal(transition_store)
                         for state, action, reward, next_state, done, achieved_goal, info in transition_store:
                             assert substitute_goal.shape == achieved_goal.shape
-                            substitute_reward = env.compute_reward(achieved_goal, substitute_goal, info)
+                            substitute_reward = self.env.compute_reward(achieved_goal, substitute_goal, info)
                             replay_memory.append(_transition(state, action, substitute_reward, next_state, done, substitute_goal))
 
                 for updates in range(self.max_updates):
