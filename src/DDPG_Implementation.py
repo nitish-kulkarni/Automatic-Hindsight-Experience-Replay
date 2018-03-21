@@ -210,6 +210,7 @@ class Episode:
         self.state_key = 'observation'
         self.goal_key = 'desired_goal'
         self.achieved_goal_key = 'achieved_goal'
+        self.is_success_key = 'is_success'
 
     def reset(self):
         obs = self.env.reset()
@@ -258,12 +259,20 @@ class Plotter:
         self.plot_dir = plot_dir
 
         self.test_rewards_intermediate = []
-        self.test_rewards_final = []
+        self.test_rewards_final = 0.0
+
+        self.test_successrate_intermediate = []
+        self.test_successrate_final = 0.0
 
     def plot_rewards(self):
-        xlabel, ylabel = 'Number of updates (%s)' % r'$\times 10^4$', 'Average Reward (Test)'
+        xlabel, ylabel = 'Epoch', 'Average Reward (Test)'
         self._plotY(self.test_rewards_intermediate, 'test_rewards', xlabel, ylabel)
-        print('Final Eval (100 iterations):\nAvg: %.2f, Std: %.2f' % self.test_rewards_final[0])
+        print('Final Eval:\nAvg: %.2f, Std: %.2f' % self.test_rewards_final)
+
+    def plot_successrate(self):
+        xlabel, ylabel = 'Epoch', 'Average Success Rate (Test)'
+        self._plotY(self.test_successrate_intermediate, 'avg_success_rate', xlabel, ylabel)
+        print('Final Success Rate:\nAvg: %.2f' % self.test_successrate_final)
 
     def _plotY(self, series, filename, xlabel, ylabel):
         fig = plt.figure()
@@ -364,10 +373,11 @@ class DDPGAgent:
             monitor_dir = os.path.join(self.monitor_base_dir, str(epoch))
             if epoch in vid_ckpts_iter:
                 save_vid = False
-            avg_reward = self.test(monitor_dir, save_vid=save_vid)
+            avg_reward, success_rate = self.test(monitor_dir, save_vid=save_vid)
             if save_vid:
                 save_vid = False
             print("Average reward: ", avg_reward)
+            print("Success Rate: ", success_rate)
 
             # Save models
             self.qnet.save_model()
@@ -400,13 +410,17 @@ class DDPGAgent:
                             substitute_reward = self.env.compute_reward(achieved_goal, substitute_goal, info)
                             replay_memory.append(_transition(state, action, substitute_reward, next_state, done, substitute_goal))
 
-                for updates in range(self.max_updates):
-                    print("Update: ", updates)
-                    samples = replay_memory.sample_batch(batch_size=self.minibatch_size)
-                    self.policynet.update(samples, self.lr_actor, self.qnet, save_graph=save_graph)
-                    self.qnet.update(samples, self.lr_critic, self.target_qnet, self.target_policynet, save_graph=save_graph)
-                    if save_graph:
-                        save_graph = False
+                    for updates in range(self.max_updates):
+                        print("Update: ", updates)
+                        samples = replay_memory.sample_batch(batch_size=self.minibatch_size)
+                        self.policynet.update(samples, self.lr_actor, self.qnet, save_graph=save_graph)
+                        self.qnet.update(samples, self.lr_critic, self.target_qnet, self.target_policynet, save_graph=save_graph)
+                        if save_graph:
+                            save_graph = False
+
+            # Save plotter after every 5 epochs
+            if epoch % 5 == 0:
+                self.save_plotter()
 
         monitor_dir = os.path.join(self.monitor_base_dir, 'test')
         self.test(monitor_dir, evaluate=False)
@@ -422,29 +436,38 @@ class DDPGAgent:
             env = wrappers.Monitor(env, monitor_dir, force=True, video_callable=False)
         episode = Episode(env, self.env_name)
         all_rewards = []
+        all_successes = []
 
         for ep in range(n_episodes):
             episode.reset()
             done = False
             total_reward = 0
+            success = 0
             while not done:
                 action = self.epsilon_greedy_policy(episode.state_rep, self.epsilon0_test)
                 if save_vid:
                     env.render()
-                _, reward, done, _, _, _ = episode.step(action)
+                _, reward, done, info, _, _ = episode.step(action)
                 total_reward += reward
+                success += info[episode.is_success_key]
+            all_successes.append(success)
             all_rewards.append(total_reward)
         episode.close()
         avg_reward, std_reward = np.average(all_rewards), np.std(all_rewards)
+        success_rate = 1.0 * sum(all_successes) / n_episodes
 
         if evaluate:
             self.plotter.test_rewards_intermediate.append(avg_reward)
+            self.plotter.test_successrate_intermediate.append(success_rate)
         else:
-            self.plotter.test_rewards_final.append((avg_reward, std_reward))
+            self.plotter.test_rewards_final = (avg_reward, std_reward)
+            self.plotter.test_successrate_final = success_rate
             print("Average reward at test time: ", avg_reward)
             print("Standard deviation at test time: ", std_reward)
+            print("Success Rate at test time: ", success_rate)
 
-        return avg_reward
+
+        return avg_reward, success_rate
 
 
 def _update_targetnet(net, target_net):
@@ -495,8 +518,8 @@ def parse_arguments():
 
     parser.add_argument('--num_epochs', dest='num_epochs', type=int, default=20)
     parser.add_argument('--num_cycles', dest='num_cycles', type=int, default=25)
-    parser.add_argument('--num_episodes', dest='num_episodes', type=int, default=1)
-    parser.add_argument('--max_updates', dest='max_updates', type=int, default=40)
+    parser.add_argument('--num_episodes', dest='num_episodes', type=int, default=16)
+    parser.add_argument('--max_updates', dest='max_updates', type=int, default=1)
 
     parser.add_argument('--num_eval', dest='num_eval', type=int, default=10)
     parser.add_argument('--num_test', dest='num_test', type=int, default=10)
@@ -539,6 +562,7 @@ def main(args):
         if not os.path.exists(plotter.plot_dir):
             os.makedirs(plotter.plot_dir)
         plotter.plot_rewards()
+        plotter.plot_successrate()
         return
 
     if not os.path.exists(perf_summary_base_dir):
