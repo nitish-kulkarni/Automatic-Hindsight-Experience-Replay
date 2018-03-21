@@ -209,20 +209,22 @@ class Episode:
         self.state_rep = None
         self.state_key = 'observation'
         self.goal_key = 'desired_goal'
+        self.achieved_goal_key = 'achieved_goal'
 
     def reset(self):
         obs = self.env.reset()
         state = obs[self.state_key]
         goal = obs[self.goal_key]
         self.state_rep = _concat(state, goal)
-        return state, goal, []
+        return state, goal
 
     def step(self, action):
         next_obs, reward, done, info = self.env.step(action)
         next_state = next_obs[self.state_key]
-        goal = next_obs[self.goal_key]
-        self.state_rep = _concat(next_state, goal)
-        return next_state, reward, done, info, goal
+        desired_goal = next_obs[self.goal_key]
+        achieved_goal = next_obs[self.achieved_goal_key]
+        self.state_rep = _concat(next_state, desired_goal)
+        return next_state, reward, done, info, desired_goal, achieved_goal
 
     def close(self):
         self.env.close()
@@ -237,12 +239,12 @@ def burn_in_memory(env, env_name, max_memory_size, burn_in):
     while itr < burn_in:
         if itr % 10000 == 0:
             print("Burn in iteration: ", itr)
-        state, goal, _ = episode.reset()
+        state, goal = episode.reset()
         done = False
         while not done:
             action = _random_action(env)
-            next_state, reward, done, _, goal = episode.step(action)
-            memory.append(_transition(state, action, reward, next_state, done, goal))
+            next_state, reward, done, _, desired_goal, _ = episode.step(action)
+            memory.append(_transition(state, action, reward, next_state, done, desired_goal))
             itr += 1
             if itr == max_memory_size:
                 break
@@ -298,6 +300,7 @@ class DDPGAgent:
         self.stdev_noise = param['stdev_noise']
         self.lr_actor = param['lr_actor']
         self.lr_critic = param['lr_critic']
+        self.her = param['her']
 
         self.env = gym.make(self.env_name)
         self.dim_s = self.env.reset()['observation'].shape[0]
@@ -318,7 +321,6 @@ class DDPGAgent:
 
     def get_param_net(self, param_agent):
         param = {}
-        pass
         param['dim_s'] = self.dim_s + self.dim_g
         param['dim_a'] = self.dim_a
         param['sess'] = self.sess
@@ -339,6 +341,10 @@ class DDPGAgent:
         save_path = '%s/%s.pickle' % (self.summary_base_dir, time)
         with open(save_path, 'wb') as fp:
             pickle.dump(self.plotter, fp, pickle.HIGHEST_PROTOCOL)
+
+    def substitute_goal(self, transition_store):
+        _, _, _, _, _, achieved_goal, _ = transition_store[-1]
+        return achieved_goal
 
     def train(self):
         """Train the Q-Network for a given number of episodes."""
@@ -373,15 +379,24 @@ class DDPGAgent:
                 self.sess.run(self.update_targetpolicynet)
 
                 for _ in range(self.num_episodes):
-                    state, goal, transition_store = episode.reset()
+                    state, goal = episode.reset()
+                    transition_store = []
                     done = False
+
+                    # Run one episode with transitions appended to replay memory
                     while not done:
                         action = self.epsilon_greedy_policy(episode.state_rep, self.epsilon0_train)
-                        next_state, reward, done, _, goal = episode.step(action)
-                        transition_store.append((state, action, reward, next_state, done))
-                        transition = _transition(state, action, reward, next_state, done, goal)
-                        replay_memory.append(transition)
+                        next_state, reward, done, info, desired_goal, achieved_goal = episode.step(action)
+                        transition_store.append((state, action, reward, next_state, done, achieved_goal, info))
+                        replay_memory.append(_transition(state, action, reward, next_state, done, desired_goal))
                         state = next_state
+
+                    # Use substitute goal and add the corresponding transitions to the replay memory
+                    if self.her and len(transition_store) > 0:
+                        substitute_goal = self.substitute_goal(transition_store)
+                        for state, action, reward, next_state, done, achieved_goal, info in transition_store:
+                            substitute_reward = env.compute_reward(achieved_goal, substitute_goal, info)
+                            replay_memory.append(_transition(state, action, substitute_reward, next_state, done, substitute_goal))
 
                 for updates in range(self.max_updates):
                     samples = replay_memory.sample_batch(batch_size=self.minibatch_size)
@@ -413,7 +428,7 @@ class DDPGAgent:
                 action = self.epsilon_greedy_policy(episode.state_rep, self.epsilon0_test)
                 if save_vid:
                     env.render()
-                _, reward, done, _, _ = episode.step(action)
+                _, reward, done, _, _, _ = episode.step(action)
                 total_reward += reward
             all_rewards.append(total_reward)
         episode.close()
@@ -496,6 +511,8 @@ def parse_arguments():
     parser.add_argument('--hidden', dest='hidden', type=int, default=256)
     parser.add_argument('--replay_memory_size', dest='replay_memory_size', type=int, default=1000000)
 
+    parser.add_argument('--her', dest='her', type=int, default=1)
+
     return parser.parse_args()
 
 
@@ -530,7 +547,6 @@ def main(args):
         os.makedirs(path)
 
     param_agent = {}
-    pass
     param_agent['render'] = args.render
 
     param_agent['num_epochs'] = args.num_epochs
@@ -551,6 +567,7 @@ def main(args):
 
     param_agent['h'] = args.hidden
     param_agent['replay_memory_size'] = args.replay_memory_size
+    param_agent['her'] = args.her
 
     param_agent['summary_base_dir'] = perf_summary_base_dir
     param_agent['monitor_base_dir'] = monitor_base_dir
