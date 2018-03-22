@@ -63,8 +63,6 @@ class PolicyNetwork:
         self.mu = tf.layers.dense(x, self.dim_a, activation=tf.nn.tanh, kernel_regularizer=regularizer, use_bias=False)
 
         trainable_vars = tf.trainable_variables(scope=self.scope)
-        print("List of trainable variables: ", trainable_vars)
-        print("Number of trainable variables: ", len(trainable_vars))
         mu_grad = tf.gradients(ys=self.mu, xs=trainable_vars, grad_ys=-self.q_grad)
         self.train_op = tf.train.AdamOptimizer(learning_rate=self.lr).apply_gradients(zip(mu_grad, trainable_vars), global_step=self.global_step_tensor)
 
