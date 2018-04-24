@@ -1,5 +1,5 @@
 import tensorflow as tf
-from utils.misc import store_args, nn
+from her.utils.misc import store_args, nn
 
 
 class ActorCritic:

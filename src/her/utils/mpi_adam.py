@@ -1,5 +1,5 @@
 from mpi4py import MPI
-import tf_util as U
+import her.utils.tf_util as U
 import tensorflow as tf
 import numpy as np
 

@@ -1,4 +1,5 @@
 .idea/
+*.pyc
 jupyter-notebooks/
 FetchReach-v0
 .DS_Store

@@ -4,11 +4,22 @@ import sys
 import importlib
 import inspect
 import functools
+import random
 
 import tensorflow as tf
 import numpy as np
 
 from her.utils import tf_util as U
+
+def set_global_seeds(i):
+    try:
+        import tensorflow as tf
+    except ImportError:
+        pass
+    else:
+        tf.set_random_seed(i)
+    np.random.seed(i)
+    random.seed(i)
 
 def store_args(method):
     """Stores provided method args as instance attributes.
