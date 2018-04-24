@@ -411,7 +411,6 @@ class DDPGAgent:
                             replay_memory.append(_transition(state, action, substitute_reward, next_state, done, substitute_goal))
 
                     for updates in range(self.max_updates):
-                        print("Update: ", updates)
                         samples = replay_memory.sample_batch(batch_size=self.minibatch_size)
                         self.policynet.update(samples, self.lr_actor, self.qnet, save_graph=save_graph)
                         self.qnet.update(samples, self.lr_critic, self.target_qnet, self.target_policynet, save_graph=save_graph)
@@ -449,7 +448,8 @@ class DDPGAgent:
                     env.render()
                 _, reward, done, info, _, _ = episode.step(action)
                 total_reward += reward
-                success += info[episode.is_success_key]
+                if done:
+                    success += info[episode.is_success_key]
             all_successes.append(success)
             all_rewards.append(total_reward)
         episode.close()
@@ -516,7 +516,7 @@ def parse_arguments():
     parser.add_argument('--train', dest='train', type=int, default=1)
     parser.add_argument('--model_file', dest='model_file', type=str)
 
-    parser.add_argument('--num_epochs', dest='num_epochs', type=int, default=20)
+    parser.add_argument('--num_epochs', dest='num_epochs', type=int, default=50)
     parser.add_argument('--num_cycles', dest='num_cycles', type=int, default=25)
     parser.add_argument('--num_episodes', dest='num_episodes', type=int, default=16)
     parser.add_argument('--max_updates', dest='max_updates', type=int, default=1)
