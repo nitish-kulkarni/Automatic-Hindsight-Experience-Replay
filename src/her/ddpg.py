@@ -59,6 +59,7 @@ class DDPG(object):
         self.dimo = self.input_dims['o']
         self.dimg = self.input_dims['g']
         self.dimu = self.input_dims['u']
+        self.dimte = self.input_dims['te']
 
         # Prepare staging area for feeding data to the model.
         stage_shapes = OrderedDict()
@@ -104,6 +105,15 @@ class DDPG(object):
         o = np.clip(o, -self.clip_obs, self.clip_obs)
         g = np.clip(g, -self.clip_obs, self.clip_obs)
         return o, g
+
+    def get_target_q_val(self, o, ag, g):
+        vals = [self.target.Q_pi_tf]
+        feed = {
+            self.target.o_tf: o.reshape(-1, self.dimo),
+            self.target.g_tf: g.reshape(-1, self.dimg)
+        }
+        ret = self.sess.run(vals, feed_dict=feed)
+        return ret[0]
 
     def get_actions(self, o, ag, g, noise_eps=0., random_eps=0., use_target_net=False,
                     compute_Q=False):
