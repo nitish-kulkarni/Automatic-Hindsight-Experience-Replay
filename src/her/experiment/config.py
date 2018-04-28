@@ -44,6 +44,7 @@ DEFAULT_PARAMS = {
     # HER
     'replay_strategy': 'future',  # supported modes: future, none
     'replay_k': 4,  # number of additional goals used for replay, only used if off_policy_data=future
+    'gg_k': 4, # number of top goals to store in buffer
     # normalization
     'norm_eps': 0.01,  # epsilon used for observation normalization
     'norm_clip': 5,  # normalized observations are cropped to this values
@@ -101,10 +102,7 @@ def log_params(params, logger=logger):
 
 
 def configure_her(params):
-    env = cached_make_env(params['make_env'])
-    env.reset()
-    def reward_fun(ag_2, g, info):  # vectorized
-        return env.compute_reward(achieved_goal=ag_2, desired_goal=g, info=info)
+    reward_fun = get_reward_fun(params['make_env'])
 
     # Prepare configuration for HER.
     her_params = {
@@ -161,7 +159,6 @@ def configure_dims(params):
         'o': obs['observation'].shape[0],
         'u': env.action_space.shape[0],
         'g': obs['desired_goal'].shape[0],
-        'te': 1
     }
     for key, value in info.items():
         value = np.array(value)
@@ -169,3 +166,10 @@ def configure_dims(params):
             value = value.reshape(1)
         dims['info_{}'.format(key)] = value.shape[0]
     return dims
+
+def get_reward_fun(make_env):
+    env = cached_make_env(make_env)
+    env.reset()
+    def reward_fun(ag_2, g, info):  # vectorized
+        return env.compute_reward(achieved_goal=ag_2, desired_goal=g, info=info)
+    return reward_fun
