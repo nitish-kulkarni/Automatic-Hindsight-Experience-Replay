@@ -140,6 +140,8 @@ def launch(
         'use_demo_states': True,
         'compute_Q': True,
         'T': params['T'],
+        'gg_k': params['gg_k'],
+        'reward_fun': config.get_reward_fun(params['make_env'])
     }
 
     eval_params = {
@@ -154,7 +156,9 @@ def launch(
         rollout_params[name] = params[name]
         eval_params[name] = params[name]
 
-    rollout_worker = RolloutWorker(params['make_env'], policy, dims, logger, **rollout_params)
+    rollout_worker = RolloutWorker(
+        params['make_env'], policy, dims, logger, **rollout_params
+    )
     rollout_worker.seed(rank_seed)
 
     evaluator = RolloutWorker(params['make_env'], policy, dims, logger, **eval_params)

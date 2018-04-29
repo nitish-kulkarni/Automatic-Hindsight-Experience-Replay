@@ -20,7 +20,7 @@ class DDPG(object):
     def __init__(self, input_dims, buffer_size, hidden, layers, network_class, polyak, batch_size,
                  Q_lr, pi_lr, norm_eps, norm_clip, max_u, action_l2, clip_obs, scope, T,
                  rollout_batch_size, subtract_goals, relative_goals, clip_pos_returns, clip_return,
-                 sample_transitions, gamma, reuse=False, **kwargs):
+                 sample_transitions, gamma, gg_k, reuse=False, **kwargs):
         """Implementation of DDPG that is used in combination with Hindsight Experience Replay (HER).
 
         Args:
@@ -59,7 +59,6 @@ class DDPG(object):
         self.dimo = self.input_dims['o']
         self.dimg = self.input_dims['g']
         self.dimu = self.input_dims['u']
-        self.dimte = self.input_dims['te']
 
         # Prepare staging area for feeding data to the model.
         stage_shapes = OrderedDict()
@@ -88,6 +87,7 @@ class DDPG(object):
                          for key, val in input_shapes.items()}
         buffer_shapes['g'] = (buffer_shapes['g'][0], self.dimg)
         buffer_shapes['ag'] = (self.T+1, self.dimg)
+        buffer_shapes['gg'] = (self.T, self.gg_k, self.dimg)
 
         buffer_size = (self.buffer_size // self.rollout_batch_size) * self.rollout_batch_size
         self.buffer = ReplayBuffer(buffer_shapes, buffer_size, self.T, self.sample_transitions)
@@ -106,6 +106,8 @@ class DDPG(object):
         g = np.clip(g, -self.clip_obs, self.clip_obs)
         return o, g
 
+    # def td_error(self, o, g):
+    #     vals = [self.Q_loss_tf]
     def get_target_q_val(self, o, ag, g):
         vals = [self.target.Q_pi_tf]
         feed = {
@@ -195,11 +197,21 @@ class DDPG(object):
 
     def sample_batch(self):
         transitions = self.buffer.sample(self.batch_size)
+        return self.batch_from_transitions(transitions)
+
+    def batch_from_transitions(self, transitions):
+        """
+            transitions is a dictionary with keys: ['o', 'ag', 'u', 'o_2', 'ag_2', 'r', 'g']
+            batch is a processed batch (normalizing, clipping, relative goal) for staging,
+                and has the keys ['o', 'ag', 'u', 'o_2', 'ag_2', 'r', g', 'g_2']
+        """
+        # preprocess observations and goals
         o, o_2, g = transitions['o'], transitions['o_2'], transitions['g']
         ag, ag_2 = transitions['ag'], transitions['ag_2']
         transitions['o'], transitions['g'] = self._preprocess_og(o, ag, g)
         transitions['o_2'], transitions['g_2'] = self._preprocess_og(o_2, ag_2, g)
 
+        # Set the correct order of keys in the batch
         transitions_batch = [transitions[key] for key in self.stage_shapes.keys()]
         return transitions_batch
 
@@ -278,7 +290,8 @@ class DDPG(object):
         target_Q_pi_tf = self.target.Q_pi_tf
         clip_range = (-self.clip_return, 0. if self.clip_pos_returns else np.inf)
         target_tf = tf.clip_by_value(batch_tf['r'] + self.gamma * target_Q_pi_tf, *clip_range)
-        self.Q_loss_tf = tf.reduce_mean(tf.square(tf.stop_gradient(target_tf) - self.main.Q_tf))
+        self.Q_loss_tf_vec = tf.square(tf.stop_gradient(target_tf) - self.main.Q_tf)
+        self.Q_loss_tf = tf.reduce_mean(self.Q_loss_tf_vec)
         self.pi_loss_tf = -tf.reduce_mean(self.main.Q_pi_tf)
         self.pi_loss_tf += self.action_l2 * tf.reduce_mean(tf.square(self.main.pi_tf / self.max_u))
         Q_grads_tf = tf.gradients(self.Q_loss_tf, self._vars('main/Q'))
