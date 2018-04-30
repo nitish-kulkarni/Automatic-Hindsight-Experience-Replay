@@ -4,7 +4,7 @@ from her.utils.misc import store_args, nn
 
 class ActorCritic:
     @store_args
-    def __init__(self, inputs_tf, dimo, dimg, dimu, max_u, o_stats, g_stats, hidden, layers,
+    def __init__(self, inputs_tf, dimo, dimg, dimu, max_u, o_stats, g_stats, hidden, layers, replay_strategy,
                  **kwargs):
         """The actor-critic network and related training code.
 
@@ -25,6 +25,7 @@ class ActorCritic:
         self.g_tf = inputs_tf['g']
         self.u_tf = inputs_tf['u']
         # self.input_goal_tf = inputs_tf['input_goal']
+        self.replay_strategy = replay_strategy
 
         # Prepare inputs for actor and critic.
         o = self.o_stats.normalize(self.o_tf)

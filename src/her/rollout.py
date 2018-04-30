@@ -3,10 +3,10 @@ from collections import deque
 import numpy as np
 import pickle
 from mujoco_py import MujocoException
-
-from her.utils.misc import convert_episode_to_batch_major, store_args
 import pdb
 
+from her.utils.misc import convert_episode_to_batch_major, store_args
+import her.constants as C
 
 class RolloutWorker:
 
@@ -14,6 +14,7 @@ class RolloutWorker:
     def __init__(self, make_env, policy, dims, logger, T, rollout_batch_size=1,
                  exploit=False, use_target_net=False, compute_Q=False, noise_eps=0,
                  random_eps=0, history_len=100, render=False, gg_k=1, reward_fun=None,
+                 replay_strategy=C.REPLAY_STRATEGY_FUTURE,
                  **kwargs):
         """Rollout worker generates experience by interacting with one or many environments.
 
@@ -37,6 +38,7 @@ class RolloutWorker:
         assert self.T > 0
 
         self.info_keys = [key.replace('info_', '') for key in dims.keys() if key.startswith('info_')]
+        self.replay_strategy = replay_strategy
 
         self.success_history = deque(maxlen=history_len)
         self.Q_history = deque(maxlen=history_len)
@@ -156,14 +158,21 @@ class RolloutWorker:
 
         ## Generated Goals for HER #
         batch_major_episode = convert_episode_to_batch_major(episode)
-        shapes = dict([(key, value.shape) for key, value in batch_major_episode.items()])
+
+        if self.replay_strategy == C.REPLAY_STRATEGY_BEST_K:
+            batch_major_episode['gg'] = self.heuristic_top_k_goals(batch_major_episode)
+
+        return batch_major_episode
+
+    def heuristic_top_k_goals(self, episode):
+        shapes = dict([(key, value.shape) for key, value in episode.items()])
 
         # Initialize generated goals as the last achieved goal
         gg_shape = (self.rollout_batch_size, self.T, self.gg_k, shapes['ag'][-1])
-        gg = np.tile(batch_major_episode['ag'][:, -1, :], (1, self.gg_k * self.T)).reshape(gg_shape)
+        gg = np.tile(episode['ag'][:, -1, :], (1, self.gg_k * self.T)).reshape(gg_shape)
         for t in range(self.T):
             # Create a single "forward pass batch" from all future transitions
-            future_transitions_t = self.future_transitions(batch_major_episode, shapes, t)
+            future_transitions_t = self.future_transitions(episode, shapes, t)
             batch_transitions = self.policy.batch_from_transitions(future_transitions_t)
 
             # Compute TD Errors for each transition
@@ -182,9 +191,7 @@ class RolloutWorker:
             for b_idx in range(self.rollout_batch_size):
                 gg[b_idx, t, :gg_size, :] = future_goals[b_idx, top_k_indices[b_idx]]
 
-        batch_major_episode['gg'] = gg
-
-        return batch_major_episode
+        return gg
 
     def future_transitions(self, episode, shapes, t):
         n_t = self.T - t

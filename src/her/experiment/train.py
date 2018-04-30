@@ -81,7 +81,7 @@ def train(policy, rollout_worker, evaluator,
 
 
 def launch(
-    env_name, logdir, n_epochs, num_cpu, seed, replay_strategy, policy_save_interval, clip_return,
+    env_name, logdir, n_epochs, num_cpu, seed, replay_strategy, policy_save_interval, clip_return, replay_k, gg_k,
     override_params={}, save_policies=True
 ):
     # Fork for multi-CPU MPI implementation.
@@ -111,6 +111,9 @@ def launch(
     params = config.DEFAULT_PARAMS
     params['env_name'] = env_name
     params['replay_strategy'] = replay_strategy
+    params['replay_k'] = replay_k
+    params['gg_k'] = gg_k
+
     if env_name in config.DEFAULT_ENV_PARAMS:
         params.update(config.DEFAULT_ENV_PARAMS[env_name])  # merge env-specific parameters in
     params.update(**override_params)  # makes it possible to override any parameter
@@ -141,6 +144,7 @@ def launch(
         'compute_Q': True,
         'T': params['T'],
         'gg_k': params['gg_k'],
+        'replay_strategy': params['replay_strategy'],
         'reward_fun': config.get_reward_fun(params['make_env'])
     }
 
@@ -150,6 +154,9 @@ def launch(
         'use_demo_states': False,
         'compute_Q': True,
         'T': params['T'],
+        'gg_k': params['gg_k'],
+        'replay_strategy': params['replay_strategy'],
+        'reward_fun': config.get_reward_fun(params['make_env'])
     }
 
     for name in ['T', 'rollout_batch_size', 'gamma', 'noise_eps', 'random_eps']:
@@ -180,6 +187,8 @@ def launch(
 @click.option('--policy_save_interval', type=int, default=5, help='the interval with which policy pickles are saved. If set to 0, only the best and latest policy will be pickled.')
 @click.option('--replay_strategy', type=click.Choice(['future', 'none']), default='future', help='the HER replay strategy to be used. "future" uses HER, "none" disables HER.')
 @click.option('--clip_return', type=int, default=1, help='whether or not returns should be clipped')
+@click.option('--replay_k', type=int, default=4, help='K for ratio of her goals vs actual goals')
+@click.option('--gg_k', type=int, default=4, help='K for choosing top k goals for generated goals in HER')
 def main(**kwargs):
     launch(**kwargs)
 

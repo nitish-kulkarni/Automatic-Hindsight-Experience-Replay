@@ -10,6 +10,7 @@ from her.utils.misc import (
 from her.normalizer import Normalizer
 from her.replay_buffer import ReplayBuffer
 from her.utils.mpi_adam import MpiAdam
+import her.constants as C
 
 def dims_to_shapes(input_dims):
     return {key: tuple([val]) if val > 0 else tuple() for key, val in input_dims.items()}
@@ -20,7 +21,7 @@ class DDPG(object):
     def __init__(self, input_dims, buffer_size, hidden, layers, network_class, polyak, batch_size,
                  Q_lr, pi_lr, norm_eps, norm_clip, max_u, action_l2, clip_obs, scope, T,
                  rollout_batch_size, subtract_goals, relative_goals, clip_pos_returns, clip_return,
-                 sample_transitions, gamma, gg_k, reuse=False, **kwargs):
+                 sample_transitions, gamma, gg_k, replay_strategy, reuse=False, **kwargs):
         """Implementation of DDPG that is used in combination with Hindsight Experience Replay (HER).
 
         Args:
@@ -54,6 +55,7 @@ class DDPG(object):
             self.clip_return = np.inf
 
         self.create_actor_critic = import_function(self.network_class)
+        self.replay_strategy = replay_strategy
 
         input_shapes = dims_to_shapes(self.input_dims)
         self.dimo = self.input_dims['o']
@@ -87,7 +89,9 @@ class DDPG(object):
                          for key, val in input_shapes.items()}
         buffer_shapes['g'] = (buffer_shapes['g'][0], self.dimg)
         buffer_shapes['ag'] = (self.T+1, self.dimg)
-        buffer_shapes['gg'] = (self.T, self.gg_k, self.dimg)
+
+        if self.replay_strategy in [C.REPLAY_STRATEGY_BEST_K]:
+            buffer_shapes['gg'] = (self.T, self.gg_k, self.dimg)
 
         buffer_size = (self.buffer_size // self.rollout_batch_size) * self.rollout_batch_size
         self.buffer = ReplayBuffer(buffer_shapes, buffer_size, self.T, self.sample_transitions)
