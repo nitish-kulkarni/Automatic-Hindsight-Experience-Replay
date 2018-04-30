@@ -24,14 +24,15 @@ class ActorCritic:
         self.o_tf = inputs_tf['o']
         self.g_tf = inputs_tf['g']
         self.u_tf = inputs_tf['u']
+        # self.input_goal_tf = inputs_tf['input_goal']
 
         # Prepare inputs for actor and critic.
         o = self.o_stats.normalize(self.o_tf)
         g = self.g_stats.normalize(self.g_tf)
         input_pi = tf.concat(axis=1, values=[o, g])  # for actor
 
-        # Prepare inputs for goal.
-        input_goal = None
+        # # Prepare inputs for goal.
+        # input_goal = self.input_goal_tf
 
         # Networks.
         with tf.variable_scope('pi'):
@@ -48,3 +49,6 @@ class ActorCritic:
             input_Q = tf.concat(axis=1, values=[o, g, self.u_tf / self.max_u])
             self._input_Q = input_Q  # exposed for tests
             self.Q_tf = nn(input_Q, [self.hidden] * self.layers + [1], reuse=True)
+            # # for goal training
+            # input_Q = tf.concat(axis=1, values=[o, self.goal_tf, self.u_tf / self.max_u])
+            # self.Q_goal_tf = nn(input_Q, [self.hidden] * self.layers + [1])
