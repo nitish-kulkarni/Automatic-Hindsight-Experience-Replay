@@ -116,14 +116,13 @@ class DDPG(object):
         }
         ret = self.sess.run(vals, feed_dict=feed)
         return ret[0]
-
     
 
-    def get_goals(self, ag, u, ag_2, e, mask):
-        ag =
-
-
-        return None
+    # def get_goals(self, ag, u, ag_2, e, mask):
+    #     ag =
+    #
+    #
+    #     return None
 
     def get_actions(self, o, ag, g, noise_eps=0., random_eps=0., use_target_net=False,
                     compute_Q=False):
