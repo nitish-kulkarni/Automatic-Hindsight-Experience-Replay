@@ -1,6 +1,41 @@
 import numpy as np
 import her.constants as C
 
+
+def make_sample_her_transitions_goal(replay_strategy, replay_k, reward_fun, gg_k):
+    """Creates a sample function that can be used for HER experience replay.
+
+    Args:
+        replay_strategy (in ['future', 'none']): the HER replay strategy; if set to 'none',
+            regular DDPG experience replay is used
+        replay_k (int): the ratio between HER replays and regular replays (e.g. k = 4 -> 4 times
+            as many HER replays as regular replays are used)
+        reward_fun (function): function to re-compute the reward with substituted goals
+        gg_k: K that dictates how many goals are generated/heiristically chosen for each transition
+    """
+    if replay_strategy in [C.REPLAY_STRATEGY_NONE]:
+        her_p = 0
+    else:
+        her_p = 1 - (1. / (1 + replay_k))
+
+    def _sample_her_transitions(episode_batch, batch_size_in_transitions):
+        """episode_batch is {key: array(buffer_size x T x dim_key)}
+        """
+        T = episode_batch['u'].shape[1]
+        rollout_batch_size = episode_batch['u'].shape[0]
+        batch_size = batch_size_in_transitions
+
+        # Select which episodes and time steps to use.
+        episode_idxs = np.random.randint(0, rollout_batch_size, batch_size)
+        t_samples = np.random.randint(T, size=batch_size)
+        transitions = {key: episode_batch[key][episode_idxs, t_samples].copy()
+                       for key in episode_batch.keys()}
+
+        return transitions
+
+    return _sample_her_transitions
+
+
 def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
     """Creates a sample function that can be used for HER experience replay.
 
@@ -12,7 +47,7 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
         reward_fun (function): function to re-compute the reward with substituted goals
         gg_k: K that dictates how many goals are generated/heiristically chosen for each transition
     """
-    if replay_strategy in [C.REPLAY_STRATEGY_NONE, C.REPLAY_STRATEGY_LAST]:
+    if replay_strategy in [C.REPLAY_STRATEGY_NONE]:
         her_p = 0
     else:
         her_p = 1 - (1. / (1 + replay_k))

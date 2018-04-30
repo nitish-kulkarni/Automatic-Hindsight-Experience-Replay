@@ -57,10 +57,16 @@ class DDPG(object):
         self.create_actor_critic = import_function(self.network_class)
         self.replay_strategy = replay_strategy
 
-        input_shapes = dims_to_shapes(self.input_dims)
         self.dimo = self.input_dims['o']
         self.dimg = self.input_dims['g']
         self.dimu = self.input_dims['u']
+
+        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            self.input_dims['e'] = self.dimg * self.T
+            self.input_dims['mask'] = self.T
+            self.dime = self.input_dims['e']
+
+        input_shapes = dims_to_shapes(self.input_dims)
 
         # Prepare staging area for feeding data to the model.
         stage_shapes = OrderedDict()
@@ -328,6 +334,19 @@ class DDPG(object):
         self.main_vars = self._vars('main/Q') + self._vars('main/pi')
         self.target_vars = self._vars('target/Q') + self._vars('target/pi')
         self.stats_vars = self._global_vars('o_stats') + self._global_vars('g_stats')
+
+        # additional code for goal generation network
+        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            # running averages
+            with tf.variable_scope('e_stats') as vs:
+                if reuse:
+                    vs.reuse_variables()
+                self.e_stats = Normalizer(self.dime, self.norm_eps, self.norm_clip, sess=self.sess)
+
+            # loss functions
+            target_Q_goal_tf = self.target.Q_goal_tf
+
+
         self.init_target_net_op = list(
             map(lambda v: v[0].assign(v[1]), zip(self.target_vars, self.main_vars)))
         self.update_target_net_op = list(
