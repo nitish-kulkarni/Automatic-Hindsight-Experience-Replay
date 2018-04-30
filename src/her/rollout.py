@@ -4,7 +4,7 @@ import numpy as np
 import pickle
 from mujoco_py import MujocoException
 
-from baselines.her.util import convert_episode_to_batch_major, store_args
+from her.utils.misc import convert_episode_to_batch_major, store_args
 import pdb
 
 
@@ -78,7 +78,6 @@ class RolloutWorker:
         obs, achieved_goals, acts, goals, successes, q_policy, q_targets,td_err = [], [], [], [], [], [], [], []
         info_values = [np.empty((self.T, self.rollout_batch_size, self.dims['info_' + key]), np.float32) for key in self.info_keys]
         Qs = []
-
         
         for t in range(self.T):
             policy_output = self.policy.get_actions(
@@ -145,6 +144,7 @@ class RolloutWorker:
                        g=goals,
                        ag=achieved_goals,
                        te=td_err)
+
         for key, value in zip(self.info_keys, info_values):
             episode['info_{}'.format(key)] = value
 

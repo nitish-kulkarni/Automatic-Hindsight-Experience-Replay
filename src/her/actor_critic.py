@@ -30,10 +30,16 @@ class ActorCritic:
         g = self.g_stats.normalize(self.g_tf)
         input_pi = tf.concat(axis=1, values=[o, g])  # for actor
 
+        # Prepare inputs for goal.
+        input_goal = None
+
         # Networks.
         with tf.variable_scope('pi'):
             self.pi_tf = self.max_u * tf.tanh(nn(
                 input_pi, [self.hidden] * self.layers + [self.dimu]))
+        # with tf.variable_scope('goal'):
+        #     self.goal_tf = self.max_g * tf.sigmoid(nn(
+        #         input_goal, [self.hidden] * self.layers + [self.dimg]))
         with tf.variable_scope('Q'):
             # for policy training
             input_Q = tf.concat(axis=1, values=[o, g, self.pi_tf / self.max_u])
