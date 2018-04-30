@@ -1,5 +1,5 @@
 import numpy as np
-
+import her.constants as C
 
 def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
     """Creates a sample function that can be used for HER experience replay.
@@ -12,10 +12,10 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
         reward_fun (function): function to re-compute the reward with substituted goals
         gg_k: K that dictates how many goals are generated/heiristically chosen for each transition
     """
-    if replay_strategy == 'future':
-        future_p = 1 - (1. / (1 + replay_k))
-    else:  # 'replay_strategy' == 'none'
-        future_p = 0
+    if replay_strategy in [C.REPLAY_STRATEGY_NONE, C.REPLAY_STRATEGY_LAST]:
+        her_p = 0
+    else:
+        her_p = 1 - (1. / (1 + replay_k))
 
     def _sample_her_transitions(episode_batch, batch_size_in_transitions):
         """episode_batch is {key: array(buffer_size x T x dim_key)}
@@ -30,25 +30,34 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
         transitions = {key: episode_batch[key][episode_idxs, t_samples].copy()
                        for key in episode_batch.keys()}
 
+        # Select time indexes proportional with probability her_p. These
+        # will be used for HER replay by substituting in HER goals.
+        her_indexes = np.where(np.random.uniform(size=batch_size) < her_p)
+    
+        # If the replay_strategy is future or heurisitc/generated goals, use future transitions
+        # Else use random/none/last
+        if replay_strategy in [C.REPLAY_STRATEGY_FUTURE, C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K]:
+            future_offset = np.random.uniform(size=batch_size) * (T - t_samples)
+            future_offset = future_offset.astype(int)
+            txn_idxs = (t_samples + 1 + future_offset)[her_indexes]
+        elif replay_strategy == C.REPLAY_STRATEGY_RANDOM:
+            offset = np.random.uniform(size=batch_size) * (T - t_samples)
+            txn_idxs = offset.astype(int)[her_indexes]
+        elif replay_strategy in [C.REPLAY_STRATEGY_LAST, C.REPLAY_STRATEGY_NONE]:
+            txn_idxs = np.ones(batch_size).astype(int)[her_indexes] * -1    # in case of NONE, her_indexes would be empty
+        else:
+            raise 'Unimplemented replay strategy'
 
-        # Select future time indexes proportional with probability future_p. These
-        # will be used for HER replay by substituting in future goals.
-        her_indexes = np.where(np.random.uniform(size=batch_size) < future_p)
-        future_offset = np.random.uniform(size=batch_size) * (T - t_samples)
-        future_offset = future_offset.astype(int)
-        future_t = (t_samples + 1 + future_offset)[her_indexes]
-
-        # future_offset = []
-        # for b in range(batch_size):
-        #     offset = np.argmax(episode_batch['te'][episode_idxs[b],t_samples[b]:])
-        #     future_offset += [ offset ]
-        # future_t = (t_samples + future_offset)[her_indexes]
+        if replay_strategy in [C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K]:
+            gg_idxs = np.random.randint(gg_k, size=batch_size)
+            her_goals = episode_batch['gg'][episode_idxs[her_indexes], txn_idxs, gg_idxs]
+        else:
+            her_goals = episode_batch['ag'][episode_idxs[her_indexes], txn_idxs]
 
         # Replace goal with achieved goal but only for the previously-selected
         # HER transitions (as defined by her_indexes). For the other transitions,
         # keep the original goal.
-        future_ag = episode_batch['ag'][episode_idxs[her_indexes], future_t]
-        transitions['g'][her_indexes] = future_ag
+        transitions['g'][her_indexes] = her_goals
 
         # Reconstruct info dictionary for reward  computation.
         info = {}
