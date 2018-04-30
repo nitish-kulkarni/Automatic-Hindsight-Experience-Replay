@@ -69,13 +69,14 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
         # will be used for HER replay by substituting in HER goals.
         her_indexes = np.where(np.random.uniform(size=batch_size) < her_p)
     
-        # If the replay_strategy is future or heurisitc/generated goals, use future transitions
-        # Else use random/none/last
-        if replay_strategy in [C.REPLAY_STRATEGY_FUTURE, C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K]:
+        # If the replay_strategy is future, use future transitions
+        # if it is heurisitc/generated goals/random, use random transitions
+        # Else use none/last
+        if replay_strategy == C.REPLAY_STRATEGY_FUTURE:
             future_offset = np.random.uniform(size=batch_size) * (T - t_samples)
             future_offset = future_offset.astype(int)
             txn_idxs = (t_samples + 1 + future_offset)[her_indexes]
-        elif replay_strategy == C.REPLAY_STRATEGY_RANDOM:
+        elif replay_strategy in [C.REPLAY_STRATEGY_RANDOM, C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K]:
             offset = np.random.uniform(size=batch_size) * (T - t_samples)
             txn_idxs = offset.astype(int)[her_indexes]
         elif replay_strategy in [C.REPLAY_STRATEGY_LAST, C.REPLAY_STRATEGY_NONE]:
@@ -84,7 +85,7 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
             raise 'Unimplemented replay strategy'
 
         if replay_strategy in [C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K]:
-            gg_idxs = np.random.randint(gg_k, size=batch_size)
+            gg_idxs = np.random.randint(gg_k, size=batch_size)[her_indexes]
             her_goals = episode_batch['gg'][episode_idxs[her_indexes], txn_idxs, gg_idxs]
         else:
             her_goals = episode_batch['ag'][episode_idxs[her_indexes], txn_idxs]
