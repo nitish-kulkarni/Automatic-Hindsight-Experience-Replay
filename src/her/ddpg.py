@@ -345,6 +345,10 @@ class DDPG(object):
 
             # loss functions
             target_Q_goal_tf = self.target.Q_goal_tf
+            target_goal_tf = tf.clip_by_value(batch_tf['r'] + self.gamma * target_Q_goal_tf, *clip_range)
+            self.goal_loss_tf = -self.LAMBDA * tf.reduce_mean(tf.square(target_goal_tf - self.main.Q_goal_tf))
+            self.goal_loss_tf += self.target.reward_sum
+
 
 
         self.init_target_net_op = list(

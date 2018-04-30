@@ -26,6 +26,7 @@ DEFAULT_PARAMS = {
     'network_class': 'her.actor_critic:ActorCritic',
     'Q_lr': 0.001,  # critic learning rate
     'pi_lr': 0.001,  # actor learning rate
+    'LAMBDA': 1, # relative weight for td-error loss for goal generation network
     'buffer_size': int(1E6),  # for experience replay
     'polyak': 0.95,  # polyak averaging coefficient
     'action_l2': 1.0,  # quadratic penalty on actions (before rescaling by max_u)
@@ -112,6 +113,7 @@ def configure_her(params):
     for name in ['replay_strategy', 'replay_k', 'gg_k']:
         her_params[name] = params[name]
         params['_' + name] = her_params[name]
+
     sample_her_transitions = make_sample_her_transitions(**her_params)
 
     return sample_her_transitions

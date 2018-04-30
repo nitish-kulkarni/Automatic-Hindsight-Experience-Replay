@@ -52,7 +52,7 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
     else:
         her_p = 1 - (1. / (1 + replay_k))
 
-    def _sample_her_transitions(episode_batch, batch_size_in_transitions):
+    def _sample_her_transitions(episode_batch, batch_size_in_transitions, ):
         """episode_batch is {key: array(buffer_size x T x dim_key)}
         """
         T = episode_batch['u'].shape[1]
