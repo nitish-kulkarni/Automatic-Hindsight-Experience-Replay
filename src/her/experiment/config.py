@@ -7,6 +7,7 @@ import gym
 from her import logger
 from her.ddpg import DDPG
 from her.her import make_sample_her_transitions
+import her.constants as C
 
 DEFAULT_ENV_PARAMS = {
     'FetchReach-v0': {
@@ -41,7 +42,7 @@ DEFAULT_PARAMS = {
     'random_eps': 0.3,  # percentage of time a random action is taken
     'noise_eps': 0.2,  # std of gaussian noise added to not-completely-random actions as a percentage of max_u
     # HER
-    'replay_strategy': 'future',  # supported modes: future, none
+    'replay_strategy': C.REPLAY_STRATEGY_FUTURE,  # supported modes: in her.constants
     'replay_k': 4,  # number of additional goals used for replay, only used if off_policy_data=future
     'gg_k': 4, # number of top goals to store in buffer
     # normalization
@@ -107,10 +108,9 @@ def configure_her(params):
     her_params = {
         'reward_fun': reward_fun,
     }
-    for name in ['replay_strategy', 'replay_k']:
+    for name in ['replay_strategy', 'replay_k', 'gg_k']:
         her_params[name] = params[name]
         params['_' + name] = her_params[name]
-        del params[name]
     sample_her_transitions = make_sample_her_transitions(**her_params)
 
     return sample_her_transitions
@@ -141,7 +141,8 @@ def configure_ddpg(dims, params, reuse=False, use_mpi=True, clip_return=True):
                         'subtract_goals': simple_goal_subtract,
                         'sample_transitions': sample_her_transitions,
                         'gamma': gamma,
-                        'gg_k': params['gg_k']
+                        'gg_k': params['gg_k'],
+                        'replay_strategy': params['replay_strategy']
                         })
     ddpg_params['info'] = {
         'env_name': params['env_name'],

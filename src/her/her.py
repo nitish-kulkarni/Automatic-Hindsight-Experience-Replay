@@ -1,7 +1,7 @@
 import numpy as np
 
 
-def make_sample_her_transitions(replay_strategy, replay_k, reward_fun):
+def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
     """Creates a sample function that can be used for HER experience replay.
 
     Args:
@@ -10,6 +10,7 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun):
         replay_k (int): the ratio between HER replays and regular replays (e.g. k = 4 -> 4 times
             as many HER replays as regular replays are used)
         reward_fun (function): function to re-compute the reward with substituted goals
+        gg_k: K that dictates how many goals are generated/heiristically chosen for each transition
     """
     if replay_strategy == 'future':
         future_p = 1 - (1. / (1 + replay_k))
