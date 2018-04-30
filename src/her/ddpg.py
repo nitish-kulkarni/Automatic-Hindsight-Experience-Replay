@@ -120,10 +120,16 @@ class DDPG(object):
         }
         ret = self.sess.run(vals, feed_dict=feed)
         return ret[0]
-    
 
-    # def get_goals(self, ag, u, ag_2, e, mask):
-    #     ag =
+    # def get_goals(self, episode, use_target_net=False):
+    #     """
+    #     :param episode: dict with keys o, g, u, ag (value for each key is a list of T/T+1 arrays of dim rollout_batch_size * dim)
+    #     :param use_target_net: True/False
+    #     :return:
+    #     """
+    #
+    #     policy = self.target if use_target_net else self.main
+    #     vals = [policy.goal_tf]
     #
     #
     #     return None
