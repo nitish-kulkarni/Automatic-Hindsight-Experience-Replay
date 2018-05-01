@@ -1,5 +1,7 @@
 import numpy as np
 import her.constants as C
+from her.rollout import get_ggn_input
+
 
 def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
     """Creates a sample function that can be used for HER experience replay.
@@ -12,7 +14,7 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
         reward_fun (function): function to re-compute the reward with substituted goals
         gg_k: K that dictates how many goals are generated/heiristically chosen for each transition
     """
-    if replay_strategy in [C.REPLAY_STRATEGY_NONE, C.REPLAY_STRATEGY_LAST]:
+    if replay_strategy in [C.REPLAY_STRATEGY_NONE]:
         her_p = 0
     else:
         her_p = 1 - (1. / (1 + replay_k))
@@ -20,6 +22,7 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
     def _sample_her_transitions(episode_batch, batch_size_in_transitions):
         """episode_batch is {key: array(buffer_size x T x dim_key)}
         """
+        # print(episode_batch['ag'].shape)
         T = episode_batch['u'].shape[1]
         rollout_batch_size = episode_batch['u'].shape[0]
         batch_size = batch_size_in_transitions
@@ -29,6 +32,7 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
         t_samples = np.random.randint(T, size=batch_size)
         transitions = {key: episode_batch[key][episode_idxs, t_samples].copy()
                        for key in episode_batch.keys()}
+        # print(episode_batch['ag'][episode_idxs, :50].shape)
 
         # Select time indexes proportional with probability her_p. These
         # will be used for HER replay by substituting in HER goals.
@@ -73,8 +77,15 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
 
         transitions = {k: transitions[k].reshape(batch_size, *transitions[k].shape[1:])
                        for k in transitions.keys()}
-
+        # print(transitions['u'].shape)
         assert(transitions['u'].shape[0] == batch_size_in_transitions)
+
+        if replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            e, mask = get_ggn_input(episode_batch['ag'][episode_idxs, :T, :], t_samples)
+            transitions['e'] = e
+            transitions['mask'] = mask
+            # e = episode_batch['e'][episode_idxs, :T, :]
+
 
         return transitions
 

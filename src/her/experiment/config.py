@@ -19,7 +19,6 @@ DEFAULT_ENV_PARAMS = {
 DEFAULT_PARAMS = {
     # env
     'max_u': 1.,  # max absolute value of actions on different coordinates
-    'max_g': 2.,  # max absolute value of goals on different coordinates
     # ddpg
     'layers': 3,  # number of layers in the critic/actor networks
     'hidden': 256,  # number of neurons in each hidden layers
@@ -49,6 +48,12 @@ DEFAULT_PARAMS = {
     # normalization
     'norm_eps': 0.01,  # epsilon used for observation normalization
     'norm_clip': 5,  # normalized observations are cropped to this values
+    # goal generation
+    'max_g': 2.,  # max absolute value of goals on different coordinates
+    'LAMBDA': 1,  # relative weight for td-error loss for goal generation network
+    'd0': 0.05,  # distance threshold for reward function
+    'slope': 2000,  # slope of sigmoid
+    'goal_lr': 0.001,  # goal learning rate
 }
 
 
@@ -92,6 +97,14 @@ def prepare_params(kwargs):
         ddpg_params[name] = kwargs[name]
         kwargs['_' + name] = kwargs[name]
         del kwargs[name]
+
+    if kwargs['replay_strategy'] == C.REPLAY_STRATEGY_GEN_K:
+        for name in ['max_g', 'LAMBDA', 'd0', 'slope', 'goal_lr']:
+            ddpg_params[name] = kwargs[name]
+            kwargs['_' + name] = kwargs[name]
+            del kwargs[name]
+        ddpg_params['max_g'] = np.array(ddpg_params['max_g']) if type(ddpg_params['max_g']) == list else ddpg_params['max_g']
+
     kwargs['ddpg_params'] = ddpg_params
 
     return kwargs
@@ -112,6 +125,7 @@ def configure_her(params):
     for name in ['replay_strategy', 'replay_k', 'gg_k']:
         her_params[name] = params[name]
         params['_' + name] = her_params[name]
+
     sample_her_transitions = make_sample_her_transitions(**her_params)
 
     return sample_her_transitions
@@ -168,6 +182,7 @@ def configure_dims(params):
             value = value.reshape(1)
         dims['info_{}'.format(key)] = value.shape[0]
     return dims
+
 
 def get_reward_fun(make_env):
     env = cached_make_env(make_env)

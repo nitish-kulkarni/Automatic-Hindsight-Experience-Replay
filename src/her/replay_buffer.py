@@ -65,7 +65,10 @@ class ReplayBuffer:
             idxs = self._get_storage_idx(batch_size)
 
             # load inputs into buffers
+
             for key in self.buffers.keys():
+                if key in ['e', 'mask']:
+                    continue
                 self.buffers[key][idxs] = episode_batch[key]
 
             self.n_transitions_stored += batch_size * self.T

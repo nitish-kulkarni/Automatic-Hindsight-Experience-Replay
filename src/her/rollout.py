@@ -8,6 +8,7 @@ import pdb
 from her.utils.misc import convert_episode_to_batch_major, store_args
 import her.constants as C
 
+
 class RolloutWorker:
 
     @store_args
@@ -49,6 +50,9 @@ class RolloutWorker:
         self.initial_ag = np.empty((self.rollout_batch_size, self.dims['g']), np.float32)  # achieved goals
         self.reset_all_rollouts()
         self.clear_history()
+
+        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            self.tstmp_indices , self.episode_indices = self.prepare_ep_tstmp_indices()
 
     def reset_rollout(self, i):
         """Resets the `i`-th rollout environment, re-samples a new goal, and updates the `initial_o`
@@ -162,7 +166,37 @@ class RolloutWorker:
         if self.replay_strategy == C.REPLAY_STRATEGY_BEST_K:
             batch_major_episode['gg'] = self.heuristic_top_k_goals(batch_major_episode)
 
+        elif self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            e, mask = get_ggn_input(batch_major_episode['ag'][self.episode_indices, :self.T, :], self.tstmp_indices)
+            u_goal = batch_major_episode['u'][self.episode_indices, self.tstmp_indices, :]
+            goal_output = self.policy.get_goals(u_goal, e, mask, use_target_net=self.use_target_net)
+            batch_major_episode['gg'] = self.prepare_gg_gen_k(np.array(episode['ag']).shape[-1], goal_output, mask)
+            batch_major_episode['e'] = np.reshape(e, (self.rollout_batch_size, self. T, -1))
+            batch_major_episode['mask'] = np.reshape(mask, (self.rollout_batch_size, self. T, -1))
+
         return batch_major_episode
+
+    def prepare_gg_gen_k(self, d, goal_output, mask):
+        goal_output = np.reshape(goal_output, (self.rollout_batch_size, self.T, d))
+        goal_output_flat = np.reshape(goal_output, (self.rollout_batch_size, self.T * d))
+        mask = np.reshape(mask, (self.rollout_batch_size, self.T, self.T))
+        all_goals = np.zeros((self.rollout_batch_size, self.T, self.T * d))
+        for i in range(self.rollout_batch_size):
+            for t in range(self.T):
+                all_goals[i, t, :(self.T - t) * d] = np.tile(goal_output[i, t, :][np.newaxis, :], (1, np.sum(mask[i, t, :])))
+                all_goals[i, t, (self.T - t) * d:] = np.reshape(np.reshape(goal_output_flat[i, :t * d], (t, d))[::-1], (t * d))
+        all_goals = np.reshape(all_goals, (self.rollout_batch_size, self.T, self.T, d))
+        return all_goals[:, :, :self.gg_k, :]
+
+    def prepare_ep_tstmp_indices(self):
+        tidx = []
+        eidx = []
+        for i in range(self.rollout_batch_size):
+            tidx += list(range(self.T))
+            eidx += [i] * self.T
+        tstmp_indices = np.array(tidx)
+        episode_indices = np.array(eidx)
+        return tstmp_indices, episode_indices
 
     def heuristic_top_k_goals(self, episode):
         shapes = dict([(key, value.shape) for key, value in episode.items()])
@@ -253,3 +287,18 @@ class RolloutWorker:
         """
         for idx, env in enumerate(self.envs):
             env.seed(seed + 1000 * idx)
+
+
+def get_ggn_input(ag, tstmp_indices):
+    """
+    :param o: batch_size * T * dim_{ag} dimensional array
+    (batch_size = rollout_batch_size*T OR (mini) batch_size for training)
+    :param tstmp_indices: batch_size dimensional array containing timestamps of transitions
+    :return: e, mask: where e is batch_size * (T*dim_{ag}) matrix and mask is batch_size * T matrix
+    """
+    batch_size, T, d = ag.shape
+    e = np.reshape(ag, (batch_size, T*d))
+    mask = np.array([[0] * i + [1] * (T - i) for i in tstmp_indices.tolist()])
+    assert e.shape == (batch_size, T*d)
+    assert mask.shape == (batch_size, T)
+    return e, mask

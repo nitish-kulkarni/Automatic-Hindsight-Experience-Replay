@@ -57,10 +57,21 @@ class DDPG(object):
         self.create_actor_critic = import_function(self.network_class)
         self.replay_strategy = replay_strategy
 
-        input_shapes = dims_to_shapes(self.input_dims)
         self.dimo = self.input_dims['o']
         self.dimg = self.input_dims['g']
         self.dimu = self.input_dims['u']
+
+        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            self.max_g = kwargs['max_g']
+            self.d0 = kwargs['d0']
+            self.slope = kwargs['slope']
+            self.goal_lr = kwargs['goal_lr']
+            self.input_dims['e'] = self.dimg * self.T
+            self.input_dims['mask'] = self.T
+            self.dime = self.input_dims['e']
+            self.dim_mask = self.input_dims['mask']
+
+        input_shapes = dims_to_shapes(self.input_dims)
 
         # Prepare staging area for feeding data to the model.
         stage_shapes = OrderedDict()
@@ -90,7 +101,7 @@ class DDPG(object):
         buffer_shapes['g'] = (buffer_shapes['g'][0], self.dimg)
         buffer_shapes['ag'] = (self.T+1, self.dimg)
 
-        if self.replay_strategy in [C.REPLAY_STRATEGY_BEST_K]:
+        if self.replay_strategy in [C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K]:
             buffer_shapes['gg'] = (self.T, self.gg_k, self.dimg)
 
         buffer_size = (self.buffer_size // self.rollout_batch_size) * self.rollout_batch_size
@@ -110,6 +121,10 @@ class DDPG(object):
         g = np.clip(g, -self.clip_obs, self.clip_obs)
         return o, g
 
+    def _preprocess_e(self, e):
+        e = np.clip(e, -self.clip_obs, self.clip_obs)
+        return e
+
     # def td_error(self, o, g):
     #     vals = [self.Q_loss_tf]
     def get_target_q_val(self, o, ag, g):
@@ -121,18 +136,25 @@ class DDPG(object):
         ret = self.sess.run(vals, feed_dict=feed)
         return ret[0]
 
-    # def get_goals(self, episode, use_target_net=False):
-    #     """
-    #     :param episode: dict with keys o, g, u, ag (value for each key is a list of T/T+1 arrays of dim rollout_batch_size * dim)
-    #     :param use_target_net: True/False
-    #     :return:
-    #     """
-    #
-    #     policy = self.target if use_target_net else self.main
-    #     vals = [policy.goal_tf]
-    #
-    #
-    #     return None
+    def get_goals(self, u_goal, e, mask, use_target_net=False):
+        """
+        :param u_goal: batch_size * dim_u dimensional array
+        :param e: batch_size * (T*dim_g) dimensional array
+        :param mask: batch_size * T dimensional array
+        :param use_target_net: True/False
+        :return:
+        """
+        e = self._preprocess_e(e)
+        policy = self.target if use_target_net else self.main
+        vals = [policy.goal_tf]
+        # feed
+        feed = {
+            policy.e_tf: e.reshape(-1, self.dime),
+            policy.mask_tf: mask.reshape(-1, self.dim_mask),
+            policy.u_tf: u_goal.reshape(-1, self.dimu)
+        }
+        ret = self.sess.run(vals, feed_dict=feed)
+        return ret[0]
 
     def get_actions(self, o, ag, g, noise_eps=0., random_eps=0., use_target_net=False,
                     compute_Q=False):
@@ -191,22 +213,28 @@ class DDPG(object):
             self.o_stats.recompute_stats()
             self.g_stats.recompute_stats()
 
+            if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+                e = transitions['e']
+                transitions['e'] = self._preprocess_e(e)
+                self.e_stats.update(transitions['e'])
+                self.e_stats.recompute_stats()
+
     def get_current_buffer_size(self):
         return self.buffer.get_current_size()
 
     def _sync_optimizers(self):
         self.Q_adam.sync()
         self.pi_adam.sync()
+        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            self.goal_adam.sync()
 
     def _grads(self):
         # Avoid feed_dict here for performance!
-        critic_loss, actor_loss, Q_grad, pi_grad = self.sess.run([
-            self.Q_loss_tf,
-            self.main.Q_pi_tf,
-            self.Q_grad_tf,
-            self.pi_grad_tf
-        ])
-        return critic_loss, actor_loss, Q_grad, pi_grad
+        tf_list = [self.Q_loss_tf, self.main.Q_pi_tf, self.Q_grad_tf, self.pi_grad_tf]
+        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            tf_list.extend([self.goal_loss_tf, self.goal_grad_tf])
+        # critic_loss, actor_loss, Q_grad, pi_grad, goal_grad = self.sess.run(tf_list)
+        return self.sess.run(tf_list)
 
     def _update(self, Q_grad, pi_grad):
         self.Q_adam.update(Q_grad, self.Q_lr)
@@ -228,6 +256,10 @@ class DDPG(object):
         transitions['o'], transitions['g'] = self._preprocess_og(o, ag, g)
         transitions['o_2'], transitions['g_2'] = self._preprocess_og(o_2, ag_2, g)
 
+        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            e = transitions['e']
+            transitions['e'] = self._preprocess_e(e)
+
         # Set the correct order of keys in the batch
         transitions_batch = [transitions[key] for key in self.stage_shapes.keys()]
         return transitions_batch
@@ -241,8 +273,21 @@ class DDPG(object):
     def train(self, stage=True):
         if stage:
             self.stage_batch()
-        critic_loss, actor_loss, Q_grad, pi_grad = self._grads()
+
+        if self.replay_strategy != C.REPLAY_STRATEGY_GEN_K:
+            critic_loss, actor_loss, Q_grad, pi_grad = self._grads()
+        else:
+            critic_loss, actor_loss, Q_grad, pi_grad, goal_loss, goal_grad = self._grads()
+            self.goal_adam.update(goal_grad, self.goal_lr)
+
         self._update(Q_grad, pi_grad)
+        # print("Critic loss: ", critic_loss)
+
+        # if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+        #     goal_loss = self.sess.run(self.target_Q_goal_tf)
+        #     # self.goal_adam.update(goal_grad, self.goal_lr)
+        #     print("Goal loss: ", goal_loss)
+
         return critic_loss, actor_loss
 
     def _init_target_net(self):
@@ -279,6 +324,13 @@ class DDPG(object):
             if reuse:
                 vs.reuse_variables()
             self.g_stats = Normalizer(self.dimg, self.norm_eps, self.norm_clip, sess=self.sess)
+
+        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            # running averages
+            with tf.variable_scope('e_stats') as vs:
+                if reuse:
+                    vs.reuse_variables()
+                self.e_stats = Normalizer(self.dime, self.norm_eps, self.norm_clip, sess=self.sess)
 
         # mini-batch sampling.
         batch = self.staging_tf.get()
@@ -328,6 +380,24 @@ class DDPG(object):
         self.main_vars = self._vars('main/Q') + self._vars('main/pi')
         self.target_vars = self._vars('target/Q') + self._vars('target/pi')
         self.stats_vars = self._global_vars('o_stats') + self._global_vars('g_stats')
+
+        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            # loss functions
+            target_Q_goal_tf = self.target.Q_goal_tf
+            target_goal_tf = tf.clip_by_value(batch_tf['r'] + self.gamma * target_Q_goal_tf, *clip_range)
+            self.goal_loss_tf = -self.LAMBDA * tf.reduce_mean(tf.square(target_goal_tf - self.main.Q_goal_tf))
+            self.goal_loss_tf += -tf.reduce_mean(self.target.reward_sum)
+
+            goal_grads_tf = tf.gradients(self.goal_loss_tf, self._vars('main/goal'))
+            self.goal_grad_tf = flatten_grads(grads=goal_grads_tf, var_list=self._vars('main/goal'))
+
+            # optimizers
+            self.goal_adam = MpiAdam(self._vars('main/goal'), scale_grad_by_procs=False)
+
+            self.main_vars += self._vars('main/goal')
+            self.target_vars += self._vars('target/goal')
+            self.stats_vars += self._global_vars('e_stats')
+
         self.init_target_net_op = list(
             map(lambda v: v[0].assign(v[1]), zip(self.target_vars, self.main_vars)))
         self.update_target_net_op = list(
