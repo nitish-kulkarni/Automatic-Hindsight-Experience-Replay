@@ -1,5 +1,6 @@
 import tensorflow as tf
 from her.utils.misc import store_args, nn
+import her.constants as C
 
 
 class ActorCritic:
@@ -50,14 +51,23 @@ class ActorCritic:
             e = self.e_stats.normalize(self.e_tf)
 
             # Prepare inputs for goal.
-            input_goal = tf.concat(axis=1, values=[u, e, self.mask_tf])
+            input_goal = tf.concat(axis=1, values=[self.u_tf/self.max_u, e, self.mask_tf])
 
             with tf.variable_scope('goal'):
                 self.goal_tf = self.max_g * tf.sigmoid(nn(input_goal, [self.hidden] * self.layers + [self.dimg]))
-                # if self.relative_goals:
-                #     self.reward =
+                # distance = self.goal_tf if self.relative_goals else (self.goal_tf-self.ag_tf)
+                # d = tf.norm(distance)
+                # self.reward = 1 / (1 + tf.exp(-d))
+                self.e_reshaped = tf.reshape(e, (-1, self.T, self.dimg))
+                self.goal_tf_repeated = tf.transpose(tf.tile(self.goal_tf[tf.newaxis, :, :], (self.T, 1, 1)), perm=[1, 0, 2])
+                self.distance = self.goal_tf if self.relative_goals else (self.goal_tf_repeated-self.e_reshaped)
+                self.d = tf.norm(self.distance, axis=2)
+                self.reward = -1 / (1 + tf.exp(-self.slope * (self.d - self.d0)))
+                self.masked_reward = tf.multiply(self.reward, self.mask_tf)
+                self.reward_sum = tf.reduce_sum(self.masked_reward, axis=1)
+
 
             with tf.variable_scope('Q'):
                 # for goal training
                 input_Q = tf.concat(axis=1, values=[o, self.goal_tf, self.u_tf / self.max_u])
-                self.Q_goal_tf = nn(input_Q, [self.hidden] * self.layers + [1])
+                self.Q_goal_tf = nn(input_Q, [self.hidden] * self.layers + [1], reuse=True)

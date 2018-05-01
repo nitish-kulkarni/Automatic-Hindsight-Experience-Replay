@@ -62,9 +62,13 @@ class DDPG(object):
         self.dimu = self.input_dims['u']
 
         if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            self.max_g = kwargs['max_g']
+            self.d0 = kwargs['d0']
+            self.slope = kwargs['slope']
             self.input_dims['e'] = self.dimg * self.T
             self.input_dims['mask'] = self.T
             self.dime = self.input_dims['e']
+            self.dim_mask = self.input_dims['mask']
 
         input_shapes = dims_to_shapes(self.input_dims)
 
@@ -96,7 +100,7 @@ class DDPG(object):
         buffer_shapes['g'] = (buffer_shapes['g'][0], self.dimg)
         buffer_shapes['ag'] = (self.T+1, self.dimg)
 
-        if self.replay_strategy in [C.REPLAY_STRATEGY_BEST_K]:
+        if self.replay_strategy in [C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K]:
             buffer_shapes['gg'] = (self.T, self.gg_k, self.dimg)
 
         buffer_size = (self.buffer_size // self.rollout_batch_size) * self.rollout_batch_size
@@ -116,6 +120,10 @@ class DDPG(object):
         g = np.clip(g, -self.clip_obs, self.clip_obs)
         return o, g
 
+    def _preprocess_e(self, e):
+        e = np.clip(e, -self.clip_obs, self.clip_obs)
+        return e
+
     # def td_error(self, o, g):
     #     vals = [self.Q_loss_tf]
     def get_target_q_val(self, o, ag, g):
@@ -127,18 +135,25 @@ class DDPG(object):
         ret = self.sess.run(vals, feed_dict=feed)
         return ret[0]
 
-    # def get_goals(self, episode, use_target_net=False):
-    #     """
-    #     :param episode: dict with keys o, g, u, ag (value for each key is a list of T/T+1 arrays of dim rollout_batch_size * dim)
-    #     :param use_target_net: True/False
-    #     :return:
-    #     """
-    #
-    #     policy = self.target if use_target_net else self.main
-    #     vals = [policy.goal_tf]
-    #
-    #
-    #     return None
+    def get_goals(self, u_goal, e, mask, use_target_net=False):
+        """
+        :param u_goal: batch_size * dim_u dimensional array
+        :param e: batch_size * (T*dim_g) dimensional array
+        :param mask: batch_size * T dimensional array
+        :param use_target_net: True/False
+        :return:
+        """
+        e = self._preprocess_e(e)
+        policy = self.target if use_target_net else self.main
+        vals = [policy.goal_tf]
+        # feed
+        feed = {
+            policy.e_tf: e.reshape(-1, self.dime),
+            policy.mask_tf: mask.reshape(-1, self.dim_mask),
+            policy.u_tf: u_goal.reshape(-1, self.dimu)
+        }
+        ret = self.sess.run(vals, feed_dict=feed)
+        return ret[0]
 
     def get_actions(self, o, ag, g, noise_eps=0., random_eps=0., use_target_net=False,
                     compute_Q=False):
@@ -196,6 +211,12 @@ class DDPG(object):
 
             self.o_stats.recompute_stats()
             self.g_stats.recompute_stats()
+
+            if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+                e = transitions['e']
+                transitions['e'] = self._preprocess_e(e)
+                self.e_stats.update(transitions['e'])
+                self.e_stats.recompute_stats()
 
     def get_current_buffer_size(self):
         return self.buffer.get_current_size()
@@ -286,6 +307,13 @@ class DDPG(object):
                 vs.reuse_variables()
             self.g_stats = Normalizer(self.dimg, self.norm_eps, self.norm_clip, sess=self.sess)
 
+        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            # running averages
+            with tf.variable_scope('e_stats') as vs:
+                if reuse:
+                    vs.reuse_variables()
+                self.e_stats = Normalizer(self.dime, self.norm_eps, self.norm_clip, sess=self.sess)
+
         # mini-batch sampling.
         batch = self.staging_tf.get()
         batch_tf = OrderedDict([(key, batch[i])
@@ -335,21 +363,19 @@ class DDPG(object):
         self.target_vars = self._vars('target/Q') + self._vars('target/pi')
         self.stats_vars = self._global_vars('o_stats') + self._global_vars('g_stats')
 
-        # additional code for goal generation network
-        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
-            # running averages
-            with tf.variable_scope('e_stats') as vs:
-                if reuse:
-                    vs.reuse_variables()
-                self.e_stats = Normalizer(self.dime, self.norm_eps, self.norm_clip, sess=self.sess)
+        # # additional code for goal generation network
+        # if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+        #     # running averages
+        #     with tf.variable_scope('e_stats') as vs:
+        #         if reuse:
+        #             vs.reuse_variables()
+        #         self.e_stats = Normalizer(self.dime, self.norm_eps, self.norm_clip, sess=self.sess)
 
-            # loss functions
-            target_Q_goal_tf = self.target.Q_goal_tf
-            target_goal_tf = tf.clip_by_value(batch_tf['r'] + self.gamma * target_Q_goal_tf, *clip_range)
-            self.goal_loss_tf = -self.LAMBDA * tf.reduce_mean(tf.square(target_goal_tf - self.main.Q_goal_tf))
-            self.goal_loss_tf += self.target.reward_sum
-
-
+            # # loss functions
+            # target_Q_goal_tf = self.target.Q_goal_tf
+            # target_goal_tf = tf.clip_by_value(batch_tf['r'] + self.gamma * target_Q_goal_tf, *clip_range)
+            # self.goal_loss_tf = -self.LAMBDA * tf.reduce_mean(tf.square(target_goal_tf - self.main.Q_goal_tf))
+            # self.goal_loss_tf += self.target.reward_sum
 
         self.init_target_net_op = list(
             map(lambda v: v[0].assign(v[1]), zip(self.target_vars, self.main_vars)))
