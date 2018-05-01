@@ -6,3 +6,4 @@ FetchReach-v0
 FetchReach-v0_0/
 FetchReach-v0_1/
 src/.DS_Store
+logs/**.pkl
