@@ -227,18 +227,26 @@ class DDPG(object):
         self.pi_adam.sync()
         if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
             self.goal_adam.sync()
+            self.Q_goal_adam.sync()
+            self.pi_goal_adam.sync()
 
     def _grads(self):
         # Avoid feed_dict here for performance!
         tf_list = [self.Q_loss_tf, self.main.Q_pi_tf, self.Q_grad_tf, self.pi_grad_tf]
         if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
             tf_list.extend([self.goal_loss_tf, self.goal_grad_tf])
-        # critic_loss, actor_loss, Q_grad, pi_grad, goal_grad = self.sess.run(tf_list)
+            tf_list.extend([self.Q_goal_loss_tf, self.Q_goal_grad_tf])
+            tf_list.extend([self.pi_goal_loss_tf, self.pi_goal_grad_tf])
         return self.sess.run(tf_list)
 
     def _update(self, Q_grad, pi_grad):
         self.Q_adam.update(Q_grad, self.Q_lr)
         self.pi_adam.update(pi_grad, self.pi_lr)
+
+    def _update_goal(self, goal_grad, Q_goal_grad, pi_goal_grad):
+        self.Q_goal_adam.update(Q_goal_grad, self.Q_lr)
+        self.pi_goal_adam.update(pi_goal_grad, self.pi_lr)
+        self.goal_adam.update(goal_grad, self.goal_lr)
 
     def sample_batch(self):
         transitions = self.buffer.sample(self.batch_size)
@@ -277,8 +285,10 @@ class DDPG(object):
         if self.replay_strategy != C.REPLAY_STRATEGY_GEN_K:
             critic_loss, actor_loss, Q_grad, pi_grad = self._grads()
         else:
-            critic_loss, actor_loss, Q_grad, pi_grad, goal_loss, goal_grad = self._grads()
-            self.goal_adam.update(goal_grad, self.goal_lr)
+            critic_loss, actor_loss, Q_grad, pi_grad,\
+            goal_loss, goal_grad, Q_goal_loss, Q_goal_grad, \
+            pi_goal_loss, pi_goal_grad = self._grads()
+            self._update_goal(goal_grad, Q_goal_grad, pi_goal_grad)
 
         self._update(Q_grad, pi_grad)
         # print("Critic loss: ", critic_loss)
@@ -382,20 +392,38 @@ class DDPG(object):
         self.stats_vars = self._global_vars('o_stats') + self._global_vars('g_stats')
 
         if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
-            # loss functions
-            target_Q_goal_tf = self.target.Q_goal_tf
-            target_goal_tf = tf.clip_by_value(batch_tf['r'] + self.gamma * target_Q_goal_tf, *clip_range)
-            self.goal_loss_tf = -self.LAMBDA * tf.reduce_mean(tf.square(target_goal_tf - self.main.Q_goal_tf))
-            self.goal_loss_tf += -tf.reduce_mean(self.target.reward_sum)
+            # loss functions for goal generation network
+            target_Q_pi_goal_tf = self.target.Q_pi_goal_tf
+            target_goal_tf = tf.clip_by_value(self.main.reward + self.gamma * target_Q_pi_goal_tf, *clip_range)
+            self.goal_loss_tf = -self.LAMBDA * tf.reduce_mean(tf.square(tf.stop_gradient(target_goal_tf) - self.main.Q_goal_tf))
+            self.goal_loss_tf += -tf.reduce_mean(self.main.reward_sum)
 
+            # loss functions for Q_goal and pi_goal
+            self.Q_goal_loss_tf = tf.reduce_mean(tf.square(tf.stop_gradient(target_goal_tf) - self.main.Q_goal_tf))
+            self.pi_goal_loss_tf = -tf.reduce_mean(self.main.Q_pi_goal_tf)
+            self.pi_goal_loss_tf += self.action_l2 * tf.reduce_mean(tf.square(self.main.pi_goal_tf / self.max_u))
+
+            # gradients
             goal_grads_tf = tf.gradients(self.goal_loss_tf, self._vars('main/goal'))
             self.goal_grad_tf = flatten_grads(grads=goal_grads_tf, var_list=self._vars('main/goal'))
 
+            Q_goal_grads_tf = tf.gradients(self.Q_goal_loss_tf, self._vars('main/gQ'))
+            self.Q_goal_grad_tf = flatten_grads(grads=Q_goal_grads_tf, var_list=self._vars('main/gQ'))
+
+            pi_goal_grads_tf = tf.gradients(self.pi_goal_loss_tf, self._vars('main/gpi'))
+            self.pi_goal_grad_tf = flatten_grads(grads=pi_goal_grads_tf, var_list=self._vars('main/gpi'))
+
+            assert len(self._vars('main/goal')) == len(goal_grads_tf)
+            assert len(self._vars('main/gQ')) == len(Q_goal_grads_tf)
+            assert len(self._vars('main/gpi')) == len(pi_goal_grads_tf)
+
             # optimizers
             self.goal_adam = MpiAdam(self._vars('main/goal'), scale_grad_by_procs=False)
+            self.Q_goal_adam = MpiAdam(self._vars('main/gQ'), scale_grad_by_procs=False)
+            self.pi_goal_adam = MpiAdam(self._vars('main/gpi'), scale_grad_by_procs=False)
 
-            self.main_vars += self._vars('main/goal')
-            self.target_vars += self._vars('target/goal')
+            self.main_vars += self._vars('main/goal') + self._vars('main/gQ') + self._vars('main/gpi')
+            self.target_vars += self._vars('target/goal') + self._vars('target/gQ') + self._vars('target/gpi')
             self.stats_vars += self._global_vars('e_stats')
 
         self.init_target_net_op = list(

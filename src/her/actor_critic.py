@@ -55,15 +55,23 @@ class ActorCritic:
 
             with tf.variable_scope('goal'):
                 self.goal_tf = self.max_g * tf.sigmoid(nn(input_goal, [self.hidden] * self.layers + [self.dimg]))
-                e_reshaped = tf.reshape(e, (-1, self.T, self.dimg))
-                goal_tf_repeated = tf.transpose(tf.tile(self.goal_tf[tf.newaxis, :, :], (self.T, 1, 1)), perm=[1, 0, 2])
-                distance = self.goal_tf if self.relative_goals else (goal_tf_repeated-e_reshaped)
-                d = tf.norm(distance, axis=2)
-                reward = -1 / (1 + tf.exp(-self.slope * (d - self.d0)))
-                masked_reward = tf.multiply(reward, self.mask_tf)
-                self.reward_sum = tf.reduce_sum(masked_reward, axis=1)
 
-            with tf.variable_scope('Q'):
-                # for goal training
+            input_pi_goal = tf.concat(axis=1, values=[o, self.goal_tf])  # for actor
+            with tf.variable_scope('gpi'):
+                self.pi_goal_tf = self.max_u * tf.tanh(nn(input_pi_goal, [self.hidden] * self.layers + [self.dimu]))
+
+            with tf.variable_scope('gQ'):
+                # for policy training
+                input_Q = tf.concat(axis=1, values=[o, self.goal_tf, self.pi_goal_tf / self.max_u])
+                self.Q_pi_goal_tf = nn(input_Q, [self.hidden] * self.layers + [1])
+                # for Q training
                 input_Q = tf.concat(axis=1, values=[o, self.goal_tf, self.u_tf / self.max_u])
                 self.Q_goal_tf = nn(input_Q, [self.hidden] * self.layers + [1], reuse=True)
+
+            e_reshaped = tf.reshape(e, (-1, self.T, self.dimg))
+            goal_tf_repeated = tf.transpose(tf.tile(self.goal_tf[tf.newaxis, :, :], (self.T, 1, 1)), perm=[1, 0, 2])
+            distance = self.goal_tf if self.relative_goals else (goal_tf_repeated - e_reshaped)
+            d = tf.norm(distance, axis=2)
+            self.reward = -1 / (1 + tf.exp(-self.slope * (d - self.d0)))
+            masked_reward = tf.multiply(self.reward, self.mask_tf)
+            self.reward_sum = tf.reduce_sum(masked_reward, axis=1)
