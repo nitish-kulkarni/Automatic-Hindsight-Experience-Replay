@@ -52,7 +52,8 @@ DEFAULT_PARAMS = {
     'max_g': 2.,  # max absolute value of goals on different coordinates
     'LAMBDA': 1,  # relative weight for td-error loss for goal generation network
     'd0': 0.05,  # distance threshold for reward function
-    'slope': 2000  # slope of sigmoid
+    'slope': 2000,  # slope of sigmoid
+    'goal_lr': 0.001,  # goal learning rate
 }
 
 
@@ -98,7 +99,7 @@ def prepare_params(kwargs):
         del kwargs[name]
 
     if kwargs['replay_strategy'] == C.REPLAY_STRATEGY_GEN_K:
-        for name in ['max_g', 'LAMBDA', 'd0', 'slope']:
+        for name in ['max_g', 'LAMBDA', 'd0', 'slope', 'goal_lr']:
             ddpg_params[name] = kwargs[name]
             kwargs['_' + name] = kwargs[name]
             del kwargs[name]

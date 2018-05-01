@@ -55,17 +55,13 @@ class ActorCritic:
 
             with tf.variable_scope('goal'):
                 self.goal_tf = self.max_g * tf.sigmoid(nn(input_goal, [self.hidden] * self.layers + [self.dimg]))
-                # distance = self.goal_tf if self.relative_goals else (self.goal_tf-self.ag_tf)
-                # d = tf.norm(distance)
-                # self.reward = 1 / (1 + tf.exp(-d))
-                self.e_reshaped = tf.reshape(e, (-1, self.T, self.dimg))
-                self.goal_tf_repeated = tf.transpose(tf.tile(self.goal_tf[tf.newaxis, :, :], (self.T, 1, 1)), perm=[1, 0, 2])
-                self.distance = self.goal_tf if self.relative_goals else (self.goal_tf_repeated-self.e_reshaped)
-                self.d = tf.norm(self.distance, axis=2)
-                self.reward = -1 / (1 + tf.exp(-self.slope * (self.d - self.d0)))
-                self.masked_reward = tf.multiply(self.reward, self.mask_tf)
-                self.reward_sum = tf.reduce_sum(self.masked_reward, axis=1)
-
+                e_reshaped = tf.reshape(e, (-1, self.T, self.dimg))
+                goal_tf_repeated = tf.transpose(tf.tile(self.goal_tf[tf.newaxis, :, :], (self.T, 1, 1)), perm=[1, 0, 2])
+                distance = self.goal_tf if self.relative_goals else (goal_tf_repeated-e_reshaped)
+                d = tf.norm(distance, axis=2)
+                reward = -1 / (1 + tf.exp(-self.slope * (d - self.d0)))
+                masked_reward = tf.multiply(reward, self.mask_tf)
+                self.reward_sum = tf.reduce_sum(masked_reward, axis=1)
 
             with tf.variable_scope('Q'):
                 # for goal training
