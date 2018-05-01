@@ -185,9 +185,9 @@ def launch(
 @click.option('--num_cpu', type=int, default=1, help='the number of CPU cores to use (using MPI)')
 @click.option('--seed', type=int, default=0, help='the random seed used to seed both the environment and the training code')
 @click.option('--policy_save_interval', type=int, default=5, help='the interval with which policy pickles are saved. If set to 0, only the best and latest policy will be pickled.')
-@click.option('--replay_strategy', type=str, default='future', help='the HER replay strategy to be used. "future" uses HER, "none" disables HER.')
+@click.option('--replay_strategy', type=str, default='best_k', help='the HER replay strategy to be used. "future" uses HER, "none" disables HER.')
 @click.option('--clip_return', type=int, default=1, help='whether or not returns should be clipped')
-@click.option('--replay_k', type=int, default=4, help='K for ratio of her goals vs actual goals')
+@click.option('--replay_k', type=int, default=8, help='K for ratio of her goals vs actual goals')
 @click.option('--gg_k', type=int, default=20, help='K for choosing top k goals for generated goals in HER')
 def main(**kwargs):
     launch(**kwargs)
