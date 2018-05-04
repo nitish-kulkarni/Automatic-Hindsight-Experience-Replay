@@ -37,7 +37,7 @@ DEFAULT_PARAMS = {
     'n_batches': 40,  # training batches per cycle
     'batch_size': 256,  # per mpi thread, measured in transitions and reduced to even multiple of chunk_length.
     'n_test_rollouts': 10,  # number of test rollouts per epoch, each consists of rollout_batch_size rollouts
-    'test_with_polyak': False,  # run test episodes with the target network
+    'test_with_polyak': True,  # run test episodes with the target network
     # exploration
     'random_eps': 0.3,  # percentage of time a random action is taken
     'noise_eps': 0.2,  # std of gaussian noise added to not-completely-random actions as a percentage of max_u
@@ -49,11 +49,14 @@ DEFAULT_PARAMS = {
     'norm_eps': 0.01,  # epsilon used for observation normalization
     'norm_clip': 5,  # normalized observations are cropped to this values
     # goal generation
-    'max_g': 2.,  # max absolute value of goals on different coordinates
-    'LAMBDA': 1,  # relative weight for td-error loss for goal generation network
+    'max_g': 0.5,  # max absolute value of goals on different coordinates
+    'LAMBDA': 0.0,  # relative weight for td-error loss for goal generation network
     'd0': 0.05,  # distance threshold for reward function
     'slope': 2000,  # slope of sigmoid
     'goal_lr': 0.001,  # goal learning rate
+    'rshape_lambda': 1,
+    'rshape_p': 2,
+    'rshaping': True
 }
 
 
@@ -99,7 +102,7 @@ def prepare_params(kwargs):
         del kwargs[name]
 
     if kwargs['replay_strategy'] == C.REPLAY_STRATEGY_GEN_K:
-        for name in ['max_g', 'LAMBDA', 'd0', 'slope', 'goal_lr']:
+        for name in ['max_g', 'LAMBDA', 'd0', 'slope', 'goal_lr', 'rshape_lambda', 'rshape_p', 'rshaping']:
             ddpg_params[name] = kwargs[name]
             kwargs['_' + name] = kwargs[name]
             del kwargs[name]

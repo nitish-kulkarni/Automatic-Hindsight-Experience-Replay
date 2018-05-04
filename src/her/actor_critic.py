@@ -48,30 +48,38 @@ class ActorCritic:
             self.e_tf = inputs_tf['e']
             self.mask_tf = inputs_tf['mask']
 
-            e = self.e_stats.normalize(self.e_tf)
+            # e = self.e_stats.normalize(self.e_tf)
+            e = self.e_tf
 
             # Prepare inputs for goal.
             input_goal = tf.concat(axis=1, values=[self.u_tf/self.max_u, e, self.mask_tf])
 
             with tf.variable_scope('goal'):
-                self.goal_tf = self.max_g * tf.sigmoid(nn(input_goal, [self.hidden] * self.layers + [self.dimg]))
+                self.goal_tf = 5 * self.max_g * tf.sigmoid(nn(input_goal, [self.hidden] * self.layers + [self.dimg]))
 
-            input_pi_goal = tf.concat(axis=1, values=[o, self.goal_tf])  # for actor
+            input_pi_goal = tf.concat(axis=1, values=[o, self.goal_tf/self.max_g])  # for actor
             with tf.variable_scope('gpi'):
                 self.pi_goal_tf = self.max_u * tf.tanh(nn(input_pi_goal, [self.hidden] * self.layers + [self.dimu]))
 
             with tf.variable_scope('gQ'):
                 # for policy training
-                input_Q = tf.concat(axis=1, values=[o, self.goal_tf, self.pi_goal_tf / self.max_u])
+                input_Q = tf.concat(axis=1, values=[o, self.goal_tf/self.max_g, self.pi_goal_tf / self.max_u])
                 self.Q_pi_goal_tf = nn(input_Q, [self.hidden] * self.layers + [1])
                 # for Q training
-                input_Q = tf.concat(axis=1, values=[o, self.goal_tf, self.u_tf / self.max_u])
+                input_Q = tf.concat(axis=1, values=[o, self.goal_tf/self.max_g, self.u_tf / self.max_u])
                 self.Q_goal_tf = nn(input_Q, [self.hidden] * self.layers + [1], reuse=True)
 
-            e_reshaped = tf.reshape(e, (-1, self.T, self.dimg))
-            goal_tf_repeated = tf.transpose(tf.tile(self.goal_tf[tf.newaxis, :, :], (self.T, 1, 1)), perm=[1, 0, 2])
-            distance = self.goal_tf if self.relative_goals else (goal_tf_repeated - e_reshaped)
-            d = tf.norm(distance, axis=2)
-            self.reward = -1 / (1 + tf.exp(-self.slope * (d - self.d0)))
+            self.e_reshaped = tf.reshape(e, (-1, self.T, self.dimg))
+            self.goal_tf_repeated = tf.transpose(tf.tile(self.goal_tf[tf.newaxis, :, :], (self.T, 1, 1)), perm=[1, 0, 2])
+            self.distance = self.goal_tf if self.relative_goals else (self.goal_tf_repeated - self.e_reshaped)
+            self.d = tf.norm(self.distance, axis=2)
+
+            if self.rshaping:
+                self.d_2 = self.d[:, 1:]
+                # self.reward = self.rshape_lambda * tf.square(d[:, self.o_ind]) - tf.square(d[:, self.o2_ind])
+            # else:
+            #     self.reward = -1 / (1 + tf.exp(-self.slope * (self.d - self.d0)))
+            #     self.reward = 1 /(1 + tf.square(self.d))
+            #     self.reward = -tf.square(self.d)
             masked_reward = tf.multiply(self.reward, self.mask_tf)
             self.reward_sum = tf.reduce_sum(masked_reward, axis=1)
