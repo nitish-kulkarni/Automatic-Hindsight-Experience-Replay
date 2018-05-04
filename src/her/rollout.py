@@ -167,6 +167,8 @@ class RolloutWorker:
             batch_major_episode['gg'] = self.heuristic_top_k_goals(batch_major_episode)
 
         elif self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            # print("True achieved goal: ")
+            # print(batch_major_episode['ag'])
             e, mask = get_ggn_input(batch_major_episode['ag'][self.episode_indices, :self.T, :], self.tstmp_indices)
             u_goal = batch_major_episode['u'][self.episode_indices, self.tstmp_indices, :]
             goal_output = self.policy.get_goals(u_goal, e, mask, use_target_net=self.use_target_net)
