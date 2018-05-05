@@ -1,0 +1,394 @@
+Logging to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1
+T: 50
+_LAMBDA: 1
+_Q_lr: 0.001
+_action_l2: 1.0
+_batch_size: 256
+_buffer_size: 1000000
+_clip_obs: 200.0
+_d0: 0.05
+_goal_lr: 0.001
+_hidden: 256
+_layers: 3
+_max_g: 0.5
+_max_u: 1.0
+_network_class: her.actor_critic:ActorCritic
+_norm_clip: 5
+_norm_eps: 0.01
+_pi_lr: 0.001
+_polyak: 0.95
+_relative_goals: False
+_rshape_lambda: 1
+_rshape_p: 2
+_rshaping: True
+_scope: ddpg
+_slope: 2000
+ddpg_params: {'buffer_size': 1000000, 'hidden': 256, 'layers': 3, 'network_class': 'her.actor_critic:ActorCritic', 'polyak': 0.95, 'batch_size': 256, 'Q_lr': 0.001, 'pi_lr': 0.001, 'norm_eps': 0.01, 'norm_clip': 5, 'max_u': 1.0, 'action_l2': 1.0, 'clip_obs': 200.0, 'scope': 'ddpg', 'relative_goals': False, 'max_g': 0.5, 'LAMBDA': 1, 'd0': 0.05, 'slope': 2000, 'goal_lr': 0.001, 'rshape_lambda': 1, 'rshape_p': 2, 'rshaping': True}
+env_name: FetchReach-v0
+gamma: 0.98
+gg_k: 1
+make_env: <function prepare_params.<locals>.make_env at 0x11cd2be18>
+n_batches: 40
+n_cycles: 10
+n_test_rollouts: 10
+noise_eps: 0.2
+random_eps: 0.3
+replay_k: 8
+replay_strategy: generated_k
+rollout_batch_size: 2
+test_with_polyak: True
+
+*** Warning ***
+You are running HER with just a single MPI worker. This will work, but the experiments that we report in Plappert et al. (2018, https://arxiv.org/abs/1802.09464) were obtained with --num_cpu 19. This makes a significant difference and if you are looking to reproduce those results, be aware of this. Please also refer to https://github.com/openai/baselines/issues/314 for further details.
+****************
+
+Creating a DDPG agent with action space 4 x 1.0...
+Training...
+------------------------------------
+| epoch              | 0           |
+| stats_g/mean       | 0.90476537  |
+| stats_g/std        | 0.22459495  |
+| stats_o/mean       | 0.26253074  |
+| stats_o/std        | 0.028437357 |
+| test/episode       | 20.0        |
+| test/mean_Q        | -0.2669663  |
+| test/success_rate  | 0.05        |
+| train/episode      | 20.0        |
+| train/mean_Q       | -0.84377134 |
+| train/success_rate | 0.0         |
+------------------------------------
+New best success rate: 0.05. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+Saving periodic policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_0.pkl ...
+------------------------------------
+| epoch              | 1           |
+| stats_g/mean       | 0.90027744  |
+| stats_g/std        | 0.21951413  |
+| stats_o/mean       | 0.26208064  |
+| stats_o/std        | 0.026633402 |
+| test/episode       | 40.0        |
+| test/mean_Q        | -0.53386426 |
+| test/success_rate  | 0.05        |
+| train/episode      | 40.0        |
+| train/mean_Q       | -1.1977117  |
+| train/success_rate | 0.0         |
+------------------------------------
+New best success rate: 0.05. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 2           |
+| stats_g/mean       | 0.89123446  |
+| stats_g/std        | 0.19174159  |
+| stats_o/mean       | 0.2622448   |
+| stats_o/std        | 0.026367232 |
+| test/episode       | 60.0        |
+| test/mean_Q        | -0.8193614  |
+| test/success_rate  | 0.3         |
+| train/episode      | 60.0        |
+| train/mean_Q       | -1.2997106  |
+| train/success_rate | 0.25        |
+------------------------------------
+New best success rate: 0.3. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 3           |
+| stats_g/mean       | 0.8959754   |
+| stats_g/std        | 0.18730772  |
+| stats_o/mean       | 0.2627371   |
+| stats_o/std        | 0.026546504 |
+| test/episode       | 80.0        |
+| test/mean_Q        | -0.8713875  |
+| test/success_rate  | 0.55        |
+| train/episode      | 80.0        |
+| train/mean_Q       | -1.2484192  |
+| train/success_rate | 0.75        |
+------------------------------------
+New best success rate: 0.55. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 4           |
+| stats_g/mean       | 0.88941306  |
+| stats_g/std        | 0.19438474  |
+| stats_o/mean       | 0.2620805   |
+| stats_o/std        | 0.026558017 |
+| test/episode       | 100.0       |
+| test/mean_Q        | -0.92529935 |
+| test/success_rate  | 0.9         |
+| train/episode      | 100.0       |
+| train/mean_Q       | -1.4051918  |
+| train/success_rate | 0.75        |
+------------------------------------
+New best success rate: 0.9. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 5           |
+| stats_g/mean       | 0.8866617   |
+| stats_g/std        | 0.19489843  |
+| stats_o/mean       | 0.2621302   |
+| stats_o/std        | 0.027033437 |
+| test/episode       | 120.0       |
+| test/mean_Q        | -0.88929003 |
+| test/success_rate  | 1.0         |
+| train/episode      | 120.0       |
+| train/mean_Q       | -1.0942341  |
+| train/success_rate | 0.75        |
+------------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+Saving periodic policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_5.pkl ...
+------------------------------------
+| epoch              | 6           |
+| stats_g/mean       | 0.8813692   |
+| stats_g/std        | 0.19562007  |
+| stats_o/mean       | 0.26143095  |
+| stats_o/std        | 0.027165025 |
+| test/episode       | 140.0       |
+| test/mean_Q        | -0.8060187  |
+| test/success_rate  | 0.95        |
+| train/episode      | 140.0       |
+| train/mean_Q       | -0.99594986 |
+| train/success_rate | 0.8         |
+------------------------------------
+------------------------------------
+| epoch              | 7           |
+| stats_g/mean       | 0.88007045  |
+| stats_g/std        | 0.19582419  |
+| stats_o/mean       | 0.26201224  |
+| stats_o/std        | 0.027368596 |
+| test/episode       | 160.0       |
+| test/mean_Q        | -0.90390795 |
+| test/success_rate  | 0.85        |
+| train/episode      | 160.0       |
+| train/mean_Q       | -0.82021534 |
+| train/success_rate | 0.9         |
+------------------------------------
+------------------------------------
+| epoch              | 8           |
+| stats_g/mean       | 0.8775225   |
+| stats_g/std        | 0.19586128  |
+| stats_o/mean       | 0.26185885  |
+| stats_o/std        | 0.02760405  |
+| test/episode       | 180.0       |
+| test/mean_Q        | -0.76655895 |
+| test/success_rate  | 0.95        |
+| train/episode      | 180.0       |
+| train/mean_Q       | -0.9760388  |
+| train/success_rate | 0.8         |
+------------------------------------
+------------------------------------
+| epoch              | 9           |
+| stats_g/mean       | 0.8772292   |
+| stats_g/std        | 0.19076784  |
+| stats_o/mean       | 0.2619751   |
+| stats_o/std        | 0.027996052 |
+| test/episode       | 200.0       |
+| test/mean_Q        | -1.0383021  |
+| test/success_rate  | 0.9         |
+| train/episode      | 200.0       |
+| train/mean_Q       | -0.876816   |
+| train/success_rate | 0.8         |
+------------------------------------
+------------------------------------
+| epoch              | 10          |
+| stats_g/mean       | 0.8766589   |
+| stats_g/std        | 0.19623578  |
+| stats_o/mean       | 0.26208228  |
+| stats_o/std        | 0.028250873 |
+| test/episode       | 220.0       |
+| test/mean_Q        | -0.7749436  |
+| test/success_rate  | 1.0         |
+| train/episode      | 220.0       |
+| train/mean_Q       | -0.8789175  |
+| train/success_rate | 0.95        |
+------------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+Saving periodic policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_10.pkl ...
+-----------------------------------
+| epoch              | 11         |
+| stats_g/mean       | 0.87678623 |
+| stats_g/std        | 0.20979428 |
+| stats_o/mean       | 0.26197502 |
+| stats_o/std        | 0.02847738 |
+| test/episode       | 240.0      |
+| test/mean_Q        | -0.4991305 |
+| test/success_rate  | 1.0        |
+| train/episode      | 240.0      |
+| train/mean_Q       | -0.7022408 |
+| train/success_rate | 0.95       |
+-----------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 12          |
+| stats_g/mean       | 0.8778985   |
+| stats_g/std        | 0.22081716  |
+| stats_o/mean       | 0.26218894  |
+| stats_o/std        | 0.028736938 |
+| test/episode       | 260.0       |
+| test/mean_Q        | -0.5419569  |
+| test/success_rate  | 0.9         |
+| train/episode      | 260.0       |
+| train/mean_Q       | -0.6414852  |
+| train/success_rate | 0.85        |
+------------------------------------
+------------------------------------
+| epoch              | 13          |
+| stats_g/mean       | 0.87798434  |
+| stats_g/std        | 0.22966476  |
+| stats_o/mean       | 0.26224145  |
+| stats_o/std        | 0.028864682 |
+| test/episode       | 280.0       |
+| test/mean_Q        | -0.3995212  |
+| test/success_rate  | 1.0         |
+| train/episode      | 280.0       |
+| train/mean_Q       | -0.5114551  |
+| train/success_rate | 0.85        |
+------------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 14          |
+| stats_g/mean       | 0.8776989   |
+| stats_g/std        | 0.24057168  |
+| stats_o/mean       | 0.2624386   |
+| stats_o/std        | 0.029002156 |
+| test/episode       | 300.0       |
+| test/mean_Q        | -0.31496832 |
+| test/success_rate  | 1.0         |
+| train/episode      | 300.0       |
+| train/mean_Q       | -0.38136637 |
+| train/success_rate | 0.8         |
+------------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 15          |
+| stats_g/mean       | 0.8782647   |
+| stats_g/std        | 0.25141743  |
+| stats_o/mean       | 0.26265362  |
+| stats_o/std        | 0.029160794 |
+| test/episode       | 320.0       |
+| test/mean_Q        | -0.33948192 |
+| test/success_rate  | 0.95        |
+| train/episode      | 320.0       |
+| train/mean_Q       | -0.443781   |
+| train/success_rate | 0.9         |
+------------------------------------
+Saving periodic policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_15.pkl ...
+------------------------------------
+| epoch              | 16          |
+| stats_g/mean       | 0.87644273  |
+| stats_g/std        | 0.26181147  |
+| stats_o/mean       | 0.2626299   |
+| stats_o/std        | 0.029320344 |
+| test/episode       | 340.0       |
+| test/mean_Q        | -0.23777549 |
+| test/success_rate  | 0.95        |
+| train/episode      | 340.0       |
+| train/mean_Q       | -0.33443058 |
+| train/success_rate | 0.6         |
+------------------------------------
+------------------------------------
+| epoch              | 17          |
+| stats_g/mean       | 0.875834    |
+| stats_g/std        | 0.27344155  |
+| stats_o/mean       | 0.26243818  |
+| stats_o/std        | 0.029372703 |
+| test/episode       | 360.0       |
+| test/mean_Q        | -0.18903    |
+| test/success_rate  | 1.0         |
+| train/episode      | 360.0       |
+| train/mean_Q       | -0.30180237 |
+| train/success_rate | 0.9         |
+------------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 18          |
+| stats_g/mean       | 0.87488747  |
+| stats_g/std        | 0.28613356  |
+| stats_o/mean       | 0.2622718   |
+| stats_o/std        | 0.029431686 |
+| test/episode       | 380.0       |
+| test/mean_Q        | -0.18260118 |
+| test/success_rate  | 1.0         |
+| train/episode      | 380.0       |
+| train/mean_Q       | -0.30814773 |
+| train/success_rate | 0.85        |
+------------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 19          |
+| stats_g/mean       | 0.87452626  |
+| stats_g/std        | 0.2951161   |
+| stats_o/mean       | 0.26241952  |
+| stats_o/std        | 0.029622734 |
+| test/episode       | 400.0       |
+| test/mean_Q        | -0.2654086  |
+| test/success_rate  | 1.0         |
+| train/episode      | 400.0       |
+| train/mean_Q       | -0.39231506 |
+| train/success_rate | 0.85        |
+------------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 20          |
+| stats_g/mean       | 0.87425905  |
+| stats_g/std        | 0.3028549   |
+| stats_o/mean       | 0.26246652  |
+| stats_o/std        | 0.029700836 |
+| test/episode       | 420.0       |
+| test/mean_Q        | -0.18497075 |
+| test/success_rate  | 1.0         |
+| train/episode      | 420.0       |
+| train/mean_Q       | -0.25986522 |
+| train/success_rate | 0.95        |
+------------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+Saving periodic policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_20.pkl ...
+------------------------------------
+| epoch              | 21          |
+| stats_g/mean       | 0.8745919   |
+| stats_g/std        | 0.31007895  |
+| stats_o/mean       | 0.26249152  |
+| stats_o/std        | 0.029843908 |
+| test/episode       | 440.0       |
+| test/mean_Q        | -0.13458614 |
+| test/success_rate  | 1.0         |
+| train/episode      | 440.0       |
+| train/mean_Q       | -0.2572119  |
+| train/success_rate | 0.95        |
+------------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 22          |
+| stats_g/mean       | 0.8687487   |
+| stats_g/std        | 0.32510117  |
+| stats_o/mean       | 0.26268393  |
+| stats_o/std        | 0.029838452 |
+| test/episode       | 460.0       |
+| test/mean_Q        | -0.21000914 |
+| test/success_rate  | 1.0         |
+| train/episode      | 460.0       |
+| train/mean_Q       | -0.2983451  |
+| train/success_rate | 0.85        |
+------------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 23          |
+| stats_g/mean       | 0.8634405   |
+| stats_g/std        | 0.339105    |
+| stats_o/mean       | 0.26276055  |
+| stats_o/std        | 0.029866304 |
+| test/episode       | 480.0       |
+| test/mean_Q        | -0.19356151 |
+| test/success_rate  | 1.0         |
+| train/episode      | 480.0       |
+| train/mean_Q       | -0.2265816  |
+| train/success_rate | 0.9         |
+------------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...
+------------------------------------
+| epoch              | 24          |
+| stats_g/mean       | 0.86523026  |
+| stats_g/std        | 0.3396689   |
+| stats_o/mean       | 0.26273304  |
+| stats_o/std        | 0.029884975 |
+| test/episode       | 500.0       |
+| test/mean_Q        | -0.14641011 |
+| test/success_rate  | 1.0         |
+| train/episode      | 500.0       |
+| train/mean_Q       | -0.25020218 |
+| train/success_rate | 0.85        |
+------------------------------------
+New best success rate: 1.0. Saving policy to /Users/alankar/Documents/cmu/code/Automatic-Hindsight-Experience-Replay/logs/FR_1/policy_best.pkl ...

@@ -50,11 +50,11 @@ DEFAULT_PARAMS = {
     'norm_clip': 5,  # normalized observations are cropped to this values
     # goal generation
     'max_g': 0.5,  # max absolute value of goals on different coordinates
-    'LAMBDA': 0.0,  # relative weight for td-error loss for goal generation network
+    'LAMBDA': 0.1,  # relative weight for td-error loss for goal generation network
     'd0': 0.05,  # distance threshold for reward function
     'slope': 2000,  # slope of sigmoid
     'goal_lr': 0.001,  # goal learning rate
-    'rshape_lambda': 1,
+    'rshape_lambda': 0,
     'rshape_p': 2,
     'rshaping': True
 }

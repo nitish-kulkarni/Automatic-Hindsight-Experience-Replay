@@ -152,7 +152,7 @@ class DDPG(object):
         """
         e = self._preprocess_e(e)
         policy = self.target if use_target_net else self.main
-        vals = [policy.goal_tf, policy.distance, policy.e_reshaped, policy.goal_tf_repeated]
+        vals = [policy.goal_tf, policy.distance, policy.e_reshaped, policy.goal_tf_repeated, policy.reward_sum]
         # feed
         feed = {
             policy.e_tf: e.reshape(-1, self.dime),
@@ -165,7 +165,12 @@ class DDPG(object):
         # print("Distance: ", ret[1])
         # print("Episode: ", ret[2])
         # print("Goal repeated: ", ret[3])
+        # print("Reward: ", np.average(ret[4]))
         # print('---------------------------------------------------------------')
+        # for var in self._vars('main/goal'):
+        #     print("Name: " + var.name)
+        #     print("Shape: " + str(var.shape))
+        #     print(var.eval())
         return ret[0]
 
     def get_actions(self, o, ag, g, noise_eps=0., random_eps=0., use_target_net=False,
@@ -308,11 +313,15 @@ class DDPG(object):
         # print("Loss: ", goal_loss)
         # print("mask: ", np.sum(x, axis=1))
         # print("distance: ", y)
+        # print("Reward: ", r)
 
         # if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
         #     goal_loss = self.sess.run(self.target_Q_goal_tf)
         #     # self.goal_adam.update(goal_grad, self.goal_lr)
         #     print("Goal loss: ", goal_loss)
+
+        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
+            self.sess.run(self.copy_normal_to_goal_op)
 
         return critic_loss, actor_loss
 
@@ -321,8 +330,6 @@ class DDPG(object):
 
     def update_target_net(self):
         self.sess.run(self.update_target_net_op)
-        if self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
-            self.sess.run(self.copy_normal_to_goal_op)
 
     def clear_buffer(self):
         self.buffer.clear_buffer()
@@ -413,9 +420,10 @@ class DDPG(object):
             # loss functions for goal generation network
             target_Q_pi_goal_tf = self.target.Q_pi_goal_tf
             target_goal_tf = tf.clip_by_value(self.main.reward + self.gamma * target_Q_pi_goal_tf, *clip_range)
-            self.goal_loss_tf = self.LAMBDA * tf.reduce_mean(tf.square(tf.stop_gradient(target_goal_tf) - self.main.Q_goal_tf))
+            self.goal_loss_tf = -self.LAMBDA * tf.reduce_mean(tf.square(tf.stop_gradient(target_goal_tf) - self.main.Q_goal_tf))
             # self.goal_loss_tf += 0.0 * tf.reduce_mean(tf.square(self.main.goal_tf / self.max_g))
             # self.goal_loss_tf = 0
+            # self.reward_sum = tf.reduce_mean(self.main.reward_sum)
             self.goal_loss_tf += -tf.reduce_mean(self.main.reward_sum)
 
             # loss functions for Q_goal and pi_goal
@@ -450,7 +458,7 @@ class DDPG(object):
             self.goal_vars = self._vars('main/gQ') + self._vars('main/gpi') + self._vars('target/gQ') + self._vars('target/gpi')
 
             self.copy_normal_to_goal_op = list(
-                map(lambda v: v[0].assign(self.polyak * v[0] + (1. - self.polyak) * v[1]), zip(self.goal_vars, self.normal_vars)))
+                map(lambda v: v[0].assign(0 * v[0] + 1 * v[1]), zip(self.goal_vars, self.normal_vars)))
 
         self.init_target_net_op = list(
             map(lambda v: v[0].assign(v[1]), zip(self.target_vars, self.main_vars)))

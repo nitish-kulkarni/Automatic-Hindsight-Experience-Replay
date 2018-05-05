@@ -57,16 +57,21 @@ class ActorCritic:
             with tf.variable_scope('goal'):
                 self.goal_tf = 5 * self.max_g * tf.sigmoid(nn(input_goal, [self.hidden] * self.layers + [self.dimg]))
 
-            input_pi_goal = tf.concat(axis=1, values=[o, self.goal_tf/self.max_g])  # for actor
+            g_inp = self.g_stats.normalize(self.goal_tf)
+
+            # self.max_g *= 5
+            # g_inp = self.goal_tf.copy()/self.max_g
+
+            input_pi_goal = tf.concat(axis=1, values=[o, g_inp])  # for actor
             with tf.variable_scope('gpi'):
                 self.pi_goal_tf = self.max_u * tf.tanh(nn(input_pi_goal, [self.hidden] * self.layers + [self.dimu]))
 
             with tf.variable_scope('gQ'):
                 # for policy training
-                input_Q = tf.concat(axis=1, values=[o, self.goal_tf/self.max_g, self.pi_goal_tf / self.max_u])
+                input_Q = tf.concat(axis=1, values=[o, g_inp, self.pi_goal_tf / self.max_u])
                 self.Q_pi_goal_tf = nn(input_Q, [self.hidden] * self.layers + [1])
                 # for Q training
-                input_Q = tf.concat(axis=1, values=[o, self.goal_tf/self.max_g, self.u_tf / self.max_u])
+                input_Q = tf.concat(axis=1, values=[o, g_inp, self.u_tf / self.max_u])
                 self.Q_goal_tf = nn(input_Q, [self.hidden] * self.layers + [1], reuse=True)
 
             self.e_reshaped = tf.reshape(e, (-1, self.T, self.dimg))
@@ -79,7 +84,7 @@ class ActorCritic:
                 # self.reward = self.rshape_lambda * tf.square(d[:, self.o_ind]) - tf.square(d[:, self.o2_ind])
             # else:
             #     self.reward = -1 / (1 + tf.exp(-self.slope * (self.d - self.d0)))
-            #     self.reward = 1 /(1 + tf.square(self.d))
+                self.reward = 1 /(1 + tf.square(self.d))
             #     self.reward = -tf.square(self.d)
             masked_reward = tf.multiply(self.reward, self.mask_tf)
             self.reward_sum = tf.reduce_sum(masked_reward, axis=1)

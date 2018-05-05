@@ -221,7 +221,8 @@ class RolloutWorker:
                 return self.generate_rollouts()
 
             # Assign the goals from top k TD errors as generated goals
-            top_k_indices = td_errors.argsort(axis=1)[:, - self.gg_k:]
+            # top_k_indices = td_errors.argsort(axis=1)[:, - self.gg_k:]
+            top_k_indices = td_errors.argsort(axis=1)[:, :self.gg_k]
             gg_size = top_k_indices.shape[-1]
             future_goals = future_transitions_t['g'].reshape((self.rollout_batch_size, self.T - t, shapes['ag'][-1]))
             for b_idx in range(self.rollout_batch_size):
