@@ -1,0 +1,2699 @@
+Logging to ../logs/FetchSlide_random_n200
+T: 50
+_Q_lr: 0.001
+_action_l2: 1.0
+_batch_size: 256
+_buffer_size: 1000000
+_clip_obs: 200.0
+_hidden: 256
+_layers: 3
+_max_u: 1.0
+_network_class: her.actor_critic:ActorCritic
+_norm_clip: 5
+_norm_eps: 0.01
+_pi_lr: 0.001
+_polyak: 0.95
+_relative_goals: False
+_scope: ddpg
+ddpg_params: {'buffer_size': 1000000, 'hidden': 256, 'layers': 3, 'network_class': 'her.actor_critic:ActorCritic', 'polyak': 0.95, 'batch_size': 256, 'Q_lr': 0.001, 'pi_lr': 0.001, 'norm_eps': 0.01, 'norm_clip': 5, 'max_u': 1.0, 'action_l2': 1.0, 'clip_obs': 200.0, 'scope': 'ddpg', 'relative_goals': False}
+env_name: FetchSlide-v1
+gamma: 0.98
+gg_k: 20
+make_env: <function prepare_params.<locals>.make_env at 0x7fb2c74ff488>
+max_g: 2.0
+n_batches: 40
+n_cycles: 50
+n_test_rollouts: 10
+noise_eps: 0.2
+random_eps: 0.3
+replay_k: 4
+replay_strategy: random
+rollout_batch_size: 2
+test_with_polyak: False
+
+*** Warning ***
+You are running HER with just a single MPI worker. This will work, but the experiments that we report in Plappert et al. (2018, https://arxiv.org/abs/1802.09464) were obtained with --num_cpu 19. This makes a significant difference and if you are looking to reproduce those results, be aware of this. Please also refer to https://github.com/openai/baselines/issues/314 for further details.
+****************
+
+Creating a DDPG agent with action space 4 x 1.0...
+Training...
+-----------------------------------
+| epoch              | 0          |
+| stats_g/mean       | 0.74308294 |
+| stats_g/std        | 0.10881195 |
+| stats_o/mean       | 0.17694302 |
+| stats_o/std        | 0.06567952 |
+| test/episode       | 20.0       |
+| test/mean_Q        | -3.1289005 |
+| test/success_rate  | 0.0        |
+| train/episode      | 100.0      |
+| train/mean_Q       | -2.0941136 |
+| train/success_rate | 0.0        |
+-----------------------------------
+New best success rate: 0.0. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_0.pkl ...
+------------------------------------
+| epoch              | 1           |
+| stats_g/mean       | 0.74368733  |
+| stats_g/std        | 0.10596734  |
+| stats_o/mean       | 0.17640248  |
+| stats_o/std        | 0.060053606 |
+| test/episode       | 40.0        |
+| test/mean_Q        | -5.146497   |
+| test/success_rate  | 0.05        |
+| train/episode      | 200.0       |
+| train/mean_Q       | -4.08954    |
+| train/success_rate | 0.0         |
+------------------------------------
+New best success rate: 0.05. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+------------------------------------
+| epoch              | 2           |
+| stats_g/mean       | 0.74583846  |
+| stats_g/std        | 0.104590505 |
+| stats_o/mean       | 0.17805575  |
+| stats_o/std        | 0.05870926  |
+| test/episode       | 60.0        |
+| test/mean_Q        | -6.9356794  |
+| test/success_rate  | 0.0         |
+| train/episode      | 300.0       |
+| train/mean_Q       | -5.9550323  |
+| train/success_rate | 0.01        |
+------------------------------------
+------------------------------------
+| epoch              | 3           |
+| stats_g/mean       | 0.74553055  |
+| stats_g/std        | 0.104002535 |
+| stats_o/mean       | 0.17785905  |
+| stats_o/std        | 0.057290856 |
+| test/episode       | 80.0        |
+| test/mean_Q        | -9.053846   |
+| test/success_rate  | 0.0         |
+| train/episode      | 400.0       |
+| train/mean_Q       | -8.098382   |
+| train/success_rate | 0.0         |
+------------------------------------
+------------------------------------
+| epoch              | 4           |
+| stats_g/mean       | 0.74676627  |
+| stats_g/std        | 0.105187505 |
+| stats_o/mean       | 0.17828608  |
+| stats_o/std        | 0.05730631  |
+| test/episode       | 100.0       |
+| test/mean_Q        | -10.576728  |
+| test/success_rate  | 0.0         |
+| train/episode      | 500.0       |
+| train/mean_Q       | -9.612843   |
+| train/success_rate | 0.02        |
+------------------------------------
+-----------------------------------
+| epoch              | 5          |
+| stats_g/mean       | 0.74639994 |
+| stats_g/std        | 0.10717044 |
+| stats_o/mean       | 0.17801379 |
+| stats_o/std        | 0.05940425 |
+| test/episode       | 120.0      |
+| test/mean_Q        | -12.39652  |
+| test/success_rate  | 0.0        |
+| train/episode      | 600.0      |
+| train/mean_Q       | -11.543422 |
+| train/success_rate | 0.0        |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_5.pkl ...
+-----------------------------------
+| epoch              | 6          |
+| stats_g/mean       | 0.7464378  |
+| stats_g/std        | 0.10718208 |
+| stats_o/mean       | 0.17812036 |
+| stats_o/std        | 0.0627926  |
+| test/episode       | 140.0      |
+| test/mean_Q        | -13.78994  |
+| test/success_rate  | 0.0        |
+| train/episode      | 700.0      |
+| train/mean_Q       | -12.905665 |
+| train/success_rate | 0.0        |
+-----------------------------------
+-----------------------------------
+| epoch              | 7          |
+| stats_g/mean       | 0.7470098  |
+| stats_g/std        | 0.10703213 |
+| stats_o/mean       | 0.1781407  |
+| stats_o/std        | 0.06228219 |
+| test/episode       | 160.0      |
+| test/mean_Q        | -13.944429 |
+| test/success_rate  | 0.0        |
+| train/episode      | 800.0      |
+| train/mean_Q       | -14.442453 |
+| train/success_rate | 0.01       |
+-----------------------------------
+------------------------------------
+| epoch              | 8           |
+| stats_g/mean       | 0.74658203  |
+| stats_g/std        | 0.10857082  |
+| stats_o/mean       | 0.17825197  |
+| stats_o/std        | 0.064081684 |
+| test/episode       | 180.0       |
+| test/mean_Q        | -15.707502  |
+| test/success_rate  | 0.0         |
+| train/episode      | 900.0       |
+| train/mean_Q       | -16.046766  |
+| train/success_rate | 0.0         |
+------------------------------------
+-----------------------------------
+| epoch              | 9          |
+| stats_g/mean       | 0.74650496 |
+| stats_g/std        | 0.1087476  |
+| stats_o/mean       | 0.17854255 |
+| stats_o/std        | 0.06471291 |
+| test/episode       | 200.0      |
+| test/mean_Q        | -18.673178 |
+| test/success_rate  | 0.0        |
+| train/episode      | 1000.0     |
+| train/mean_Q       | -17.164272 |
+| train/success_rate | 0.01       |
+-----------------------------------
+-----------------------------------
+| epoch              | 10         |
+| stats_g/mean       | 0.7462766  |
+| stats_g/std        | 0.10895262 |
+| stats_o/mean       | 0.17829382 |
+| stats_o/std        | 0.06526694 |
+| test/episode       | 220.0      |
+| test/mean_Q        | -18.752514 |
+| test/success_rate  | 0.0        |
+| train/episode      | 1100.0     |
+| train/mean_Q       | -17.906214 |
+| train/success_rate | 0.01       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_10.pkl ...
+------------------------------------
+| epoch              | 11          |
+| stats_g/mean       | 0.74659246  |
+| stats_g/std        | 0.109579824 |
+| stats_o/mean       | 0.17837755  |
+| stats_o/std        | 0.06534437  |
+| test/episode       | 240.0       |
+| test/mean_Q        | -18.180088  |
+| test/success_rate  | 0.05        |
+| train/episode      | 1200.0      |
+| train/mean_Q       | -19.36344   |
+| train/success_rate | 0.01        |
+------------------------------------
+New best success rate: 0.05. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+-----------------------------------
+| epoch              | 12         |
+| stats_g/mean       | 0.7469136  |
+| stats_g/std        | 0.11018958 |
+| stats_o/mean       | 0.17858452 |
+| stats_o/std        | 0.0665574  |
+| test/episode       | 260.0      |
+| test/mean_Q        | -19.972153 |
+| test/success_rate  | 0.0        |
+| train/episode      | 1300.0     |
+| train/mean_Q       | -19.217844 |
+| train/success_rate | 0.0        |
+-----------------------------------
+-----------------------------------
+| epoch              | 13         |
+| stats_g/mean       | 0.7471408  |
+| stats_g/std        | 0.10982221 |
+| stats_o/mean       | 0.17904156 |
+| stats_o/std        | 0.06722783 |
+| test/episode       | 280.0      |
+| test/mean_Q        | -19.761906 |
+| test/success_rate  | 0.0        |
+| train/episode      | 1400.0     |
+| train/mean_Q       | -19.173372 |
+| train/success_rate | 0.04       |
+-----------------------------------
+-----------------------------------
+| epoch              | 14         |
+| stats_g/mean       | 0.7468737  |
+| stats_g/std        | 0.1102913  |
+| stats_o/mean       | 0.17905289 |
+| stats_o/std        | 0.06807492 |
+| test/episode       | 300.0      |
+| test/mean_Q        | -18.667126 |
+| test/success_rate  | 0.0        |
+| train/episode      | 1500.0     |
+| train/mean_Q       | -21.475754 |
+| train/success_rate | 0.0        |
+-----------------------------------
+------------------------------------
+| epoch              | 15          |
+| stats_g/mean       | 0.74732417  |
+| stats_g/std        | 0.110081226 |
+| stats_o/mean       | 0.17921707  |
+| stats_o/std        | 0.06826293  |
+| test/episode       | 320.0       |
+| test/mean_Q        | -23.73647   |
+| test/success_rate  | 0.0         |
+| train/episode      | 1600.0      |
+| train/mean_Q       | -20.870228  |
+| train/success_rate | 0.0         |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_15.pkl ...
+-----------------------------------
+| epoch              | 16         |
+| stats_g/mean       | 0.74738437 |
+| stats_g/std        | 0.11065925 |
+| stats_o/mean       | 0.17932613 |
+| stats_o/std        | 0.06877801 |
+| test/episode       | 340.0      |
+| test/mean_Q        | -20.94216  |
+| test/success_rate  | 0.0        |
+| train/episode      | 1700.0     |
+| train/mean_Q       | -21.523663 |
+| train/success_rate | 0.01       |
+-----------------------------------
+------------------------------------
+| epoch              | 17          |
+| stats_g/mean       | 0.74770254  |
+| stats_g/std        | 0.110316664 |
+| stats_o/mean       | 0.17951122  |
+| stats_o/std        | 0.06856641  |
+| test/episode       | 360.0       |
+| test/mean_Q        | -24.041748  |
+| test/success_rate  | 0.0         |
+| train/episode      | 1800.0      |
+| train/mean_Q       | -21.696575  |
+| train/success_rate | 0.03        |
+------------------------------------
+-----------------------------------
+| epoch              | 18         |
+| stats_g/mean       | 0.74766564 |
+| stats_g/std        | 0.11064417 |
+| stats_o/mean       | 0.17949043 |
+| stats_o/std        | 0.06862947 |
+| test/episode       | 380.0      |
+| test/mean_Q        | -23.125132 |
+| test/success_rate  | 0.0        |
+| train/episode      | 1900.0     |
+| train/mean_Q       | -23.078176 |
+| train/success_rate | 0.02       |
+-----------------------------------
+------------------------------------
+| epoch              | 19          |
+| stats_g/mean       | 0.7475603   |
+| stats_g/std        | 0.11127249  |
+| stats_o/mean       | 0.1794721   |
+| stats_o/std        | 0.069031805 |
+| test/episode       | 400.0       |
+| test/mean_Q        | -23.92073   |
+| test/success_rate  | 0.0         |
+| train/episode      | 2000.0      |
+| train/mean_Q       | -24.358372  |
+| train/success_rate | 0.01        |
+------------------------------------
+-----------------------------------
+| epoch              | 20         |
+| stats_g/mean       | 0.7477471  |
+| stats_g/std        | 0.11183954 |
+| stats_o/mean       | 0.17952932 |
+| stats_o/std        | 0.07001638 |
+| test/episode       | 420.0      |
+| test/mean_Q        | -21.190128 |
+| test/success_rate  | 0.1        |
+| train/episode      | 2100.0     |
+| train/mean_Q       | -24.159744 |
+| train/success_rate | 0.02       |
+-----------------------------------
+New best success rate: 0.1. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_20.pkl ...
+-----------------------------------
+| epoch              | 21         |
+| stats_g/mean       | 0.7476962  |
+| stats_g/std        | 0.11211333 |
+| stats_o/mean       | 0.17950615 |
+| stats_o/std        | 0.07093276 |
+| test/episode       | 440.0      |
+| test/mean_Q        | -25.264772 |
+| test/success_rate  | 0.0        |
+| train/episode      | 2200.0     |
+| train/mean_Q       | -24.090569 |
+| train/success_rate | 0.0        |
+-----------------------------------
+-----------------------------------
+| epoch              | 22         |
+| stats_g/mean       | 0.7479152  |
+| stats_g/std        | 0.11231845 |
+| stats_o/mean       | 0.17965026 |
+| stats_o/std        | 0.07110122 |
+| test/episode       | 460.0      |
+| test/mean_Q        | -23.181795 |
+| test/success_rate  | 0.0        |
+| train/episode      | 2300.0     |
+| train/mean_Q       | -24.07836  |
+| train/success_rate | 0.01       |
+-----------------------------------
+-----------------------------------
+| epoch              | 23         |
+| stats_g/mean       | 0.7477897  |
+| stats_g/std        | 0.11236472 |
+| stats_o/mean       | 0.1797191  |
+| stats_o/std        | 0.07145244 |
+| test/episode       | 480.0      |
+| test/mean_Q        | -21.329916 |
+| test/success_rate  | 0.05       |
+| train/episode      | 2400.0     |
+| train/mean_Q       | -23.759764 |
+| train/success_rate | 0.04       |
+-----------------------------------
+------------------------------------
+| epoch              | 24          |
+| stats_g/mean       | 0.74796754  |
+| stats_g/std        | 0.11246724  |
+| stats_o/mean       | 0.17977531  |
+| stats_o/std        | 0.071694605 |
+| test/episode       | 500.0       |
+| test/mean_Q        | -21.935421  |
+| test/success_rate  | 0.0         |
+| train/episode      | 2500.0      |
+| train/mean_Q       | -24.157095  |
+| train/success_rate | 0.03        |
+------------------------------------
+-----------------------------------
+| epoch              | 25         |
+| stats_g/mean       | 0.74790025 |
+| stats_g/std        | 0.11253855 |
+| stats_o/mean       | 0.17969893 |
+| stats_o/std        | 0.07192628 |
+| test/episode       | 520.0      |
+| test/mean_Q        | -23.758808 |
+| test/success_rate  | 0.0        |
+| train/episode      | 2600.0     |
+| train/mean_Q       | -27.284203 |
+| train/success_rate | 0.02       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_25.pkl ...
+-----------------------------------
+| epoch              | 26         |
+| stats_g/mean       | 0.74809533 |
+| stats_g/std        | 0.11290554 |
+| stats_o/mean       | 0.1797209  |
+| stats_o/std        | 0.07203336 |
+| test/episode       | 540.0      |
+| test/mean_Q        | -22.896606 |
+| test/success_rate  | 0.0        |
+| train/episode      | 2700.0     |
+| train/mean_Q       | -24.90066  |
+| train/success_rate | 0.01       |
+-----------------------------------
+------------------------------------
+| epoch              | 27          |
+| stats_g/mean       | 0.748224    |
+| stats_g/std        | 0.113296025 |
+| stats_o/mean       | 0.1797818   |
+| stats_o/std        | 0.07317229  |
+| test/episode       | 560.0       |
+| test/mean_Q        | -23.802559  |
+| test/success_rate  | 0.0         |
+| train/episode      | 2800.0      |
+| train/mean_Q       | -25.886345  |
+| train/success_rate | 0.02        |
+------------------------------------
+-----------------------------------
+| epoch              | 28         |
+| stats_g/mean       | 0.7481332  |
+| stats_g/std        | 0.11361369 |
+| stats_o/mean       | 0.17982656 |
+| stats_o/std        | 0.07330258 |
+| test/episode       | 580.0      |
+| test/mean_Q        | -24.080229 |
+| test/success_rate  | 0.05       |
+| train/episode      | 2900.0     |
+| train/mean_Q       | -25.433832 |
+| train/success_rate | 0.01       |
+-----------------------------------
+------------------------------------
+| epoch              | 29          |
+| stats_g/mean       | 0.74824184  |
+| stats_g/std        | 0.11360511  |
+| stats_o/mean       | 0.18008956  |
+| stats_o/std        | 0.073607385 |
+| test/episode       | 600.0       |
+| test/mean_Q        | -26.472178  |
+| test/success_rate  | 0.0         |
+| train/episode      | 3000.0      |
+| train/mean_Q       | -26.189293  |
+| train/success_rate | 0.01        |
+------------------------------------
+-----------------------------------
+| epoch              | 30         |
+| stats_g/mean       | 0.7481987  |
+| stats_g/std        | 0.11393032 |
+| stats_o/mean       | 0.18013224 |
+| stats_o/std        | 0.07375061 |
+| test/episode       | 620.0      |
+| test/mean_Q        | -24.872034 |
+| test/success_rate  | 0.05       |
+| train/episode      | 3100.0     |
+| train/mean_Q       | -25.881512 |
+| train/success_rate | 0.05       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_30.pkl ...
+------------------------------------
+| epoch              | 31          |
+| stats_g/mean       | 0.7482516   |
+| stats_g/std        | 0.11419532  |
+| stats_o/mean       | 0.18029365  |
+| stats_o/std        | 0.074193984 |
+| test/episode       | 640.0       |
+| test/mean_Q        | -22.270649  |
+| test/success_rate  | 0.05        |
+| train/episode      | 3200.0      |
+| train/mean_Q       | -25.56033   |
+| train/success_rate | 0.05        |
+------------------------------------
+------------------------------------
+| epoch              | 32          |
+| stats_g/mean       | 0.7484171   |
+| stats_g/std        | 0.114571154 |
+| stats_o/mean       | 0.18053941  |
+| stats_o/std        | 0.07464248  |
+| test/episode       | 660.0       |
+| test/mean_Q        | -21.612982  |
+| test/success_rate  | 0.05        |
+| train/episode      | 3300.0      |
+| train/mean_Q       | -26.629063  |
+| train/success_rate | 0.03        |
+------------------------------------
+------------------------------------
+| epoch              | 33          |
+| stats_g/mean       | 0.74868363  |
+| stats_g/std        | 0.115048416 |
+| stats_o/mean       | 0.18081939  |
+| stats_o/std        | 0.07519903  |
+| test/episode       | 680.0       |
+| test/mean_Q        | -19.34064   |
+| test/success_rate  | 0.1         |
+| train/episode      | 3400.0      |
+| train/mean_Q       | -25.82177   |
+| train/success_rate | 0.04        |
+------------------------------------
+New best success rate: 0.1. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+------------------------------------
+| epoch              | 34          |
+| stats_g/mean       | 0.74866503  |
+| stats_g/std        | 0.115234196 |
+| stats_o/mean       | 0.18088202  |
+| stats_o/std        | 0.075615585 |
+| test/episode       | 700.0       |
+| test/mean_Q        | -21.045238  |
+| test/success_rate  | 0.1         |
+| train/episode      | 3500.0      |
+| train/mean_Q       | -24.668726  |
+| train/success_rate | 0.08        |
+------------------------------------
+New best success rate: 0.1. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+------------------------------------
+| epoch              | 35          |
+| stats_g/mean       | 0.74885416  |
+| stats_g/std        | 0.116054915 |
+| stats_o/mean       | 0.18098402  |
+| stats_o/std        | 0.07622828  |
+| test/episode       | 720.0       |
+| test/mean_Q        | -21.967146  |
+| test/success_rate  | 0.05        |
+| train/episode      | 3600.0      |
+| train/mean_Q       | -25.975342  |
+| train/success_rate | 0.02        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_35.pkl ...
+-----------------------------------
+| epoch              | 36         |
+| stats_g/mean       | 0.7489106  |
+| stats_g/std        | 0.11622261 |
+| stats_o/mean       | 0.18102033 |
+| stats_o/std        | 0.07631661 |
+| test/episode       | 740.0      |
+| test/mean_Q        | -23.45516  |
+| test/success_rate  | 0.1        |
+| train/episode      | 3700.0     |
+| train/mean_Q       | -25.562204 |
+| train/success_rate | 0.06       |
+-----------------------------------
+New best success rate: 0.1. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+------------------------------------
+| epoch              | 37          |
+| stats_g/mean       | 0.7492266   |
+| stats_g/std        | 0.116460495 |
+| stats_o/mean       | 0.18121585  |
+| stats_o/std        | 0.07671657  |
+| test/episode       | 760.0       |
+| test/mean_Q        | -20.239351  |
+| test/success_rate  | 0.05        |
+| train/episode      | 3800.0      |
+| train/mean_Q       | -25.675137  |
+| train/success_rate | 0.09        |
+------------------------------------
+-----------------------------------
+| epoch              | 38         |
+| stats_g/mean       | 0.7497013  |
+| stats_g/std        | 0.1167698  |
+| stats_o/mean       | 0.181268   |
+| stats_o/std        | 0.07718781 |
+| test/episode       | 780.0      |
+| test/mean_Q        | -18.424038 |
+| test/success_rate  | 0.15       |
+| train/episode      | 3900.0     |
+| train/mean_Q       | -24.760723 |
+| train/success_rate | 0.03       |
+-----------------------------------
+New best success rate: 0.15. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+-----------------------------------
+| epoch              | 39         |
+| stats_g/mean       | 0.74978834 |
+| stats_g/std        | 0.11693584 |
+| stats_o/mean       | 0.18130718 |
+| stats_o/std        | 0.07773482 |
+| test/episode       | 800.0      |
+| test/mean_Q        | -19.793081 |
+| test/success_rate  | 0.0        |
+| train/episode      | 4000.0     |
+| train/mean_Q       | -22.78307  |
+| train/success_rate | 0.06       |
+-----------------------------------
+-----------------------------------
+| epoch              | 40         |
+| stats_g/mean       | 0.74983805 |
+| stats_g/std        | 0.11706544 |
+| stats_o/mean       | 0.18122062 |
+| stats_o/std        | 0.07779635 |
+| test/episode       | 820.0      |
+| test/mean_Q        | -18.465897 |
+| test/success_rate  | 0.05       |
+| train/episode      | 4100.0     |
+| train/mean_Q       | -22.891695 |
+| train/success_rate | 0.03       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_40.pkl ...
+------------------------------------
+| epoch              | 41          |
+| stats_g/mean       | 0.7499347   |
+| stats_g/std        | 0.1172614   |
+| stats_o/mean       | 0.18130337  |
+| stats_o/std        | 0.078526214 |
+| test/episode       | 840.0       |
+| test/mean_Q        | -18.718245  |
+| test/success_rate  | 0.05        |
+| train/episode      | 4200.0      |
+| train/mean_Q       | -23.45155   |
+| train/success_rate | 0.03        |
+------------------------------------
+------------------------------------
+| epoch              | 42          |
+| stats_g/mean       | 0.7500251   |
+| stats_g/std        | 0.117539294 |
+| stats_o/mean       | 0.18122773  |
+| stats_o/std        | 0.078847036 |
+| test/episode       | 860.0       |
+| test/mean_Q        | -20.378178  |
+| test/success_rate  | 0.15        |
+| train/episode      | 4300.0      |
+| train/mean_Q       | -23.68234   |
+| train/success_rate | 0.05        |
+------------------------------------
+New best success rate: 0.15. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+------------------------------------
+| epoch              | 43          |
+| stats_g/mean       | 0.7500806   |
+| stats_g/std        | 0.11799425  |
+| stats_o/mean       | 0.18130797  |
+| stats_o/std        | 0.079579905 |
+| test/episode       | 880.0       |
+| test/mean_Q        | -18.640394  |
+| test/success_rate  | 0.1         |
+| train/episode      | 4400.0      |
+| train/mean_Q       | -24.348915  |
+| train/success_rate | 0.01        |
+------------------------------------
+-----------------------------------
+| epoch              | 44         |
+| stats_g/mean       | 0.75014406 |
+| stats_g/std        | 0.11809579 |
+| stats_o/mean       | 0.18134736 |
+| stats_o/std        | 0.0801282  |
+| test/episode       | 900.0      |
+| test/mean_Q        | -20.7146   |
+| test/success_rate  | 0.05       |
+| train/episode      | 4500.0     |
+| train/mean_Q       | -25.00246  |
+| train/success_rate | 0.03       |
+-----------------------------------
+-----------------------------------
+| epoch              | 45         |
+| stats_g/mean       | 0.7502391  |
+| stats_g/std        | 0.11825041 |
+| stats_o/mean       | 0.18139401 |
+| stats_o/std        | 0.08018294 |
+| test/episode       | 920.0      |
+| test/mean_Q        | -25.963312 |
+| test/success_rate  | 0.1        |
+| train/episode      | 4600.0     |
+| train/mean_Q       | -22.346392 |
+| train/success_rate | 0.05       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_45.pkl ...
+-----------------------------------
+| epoch              | 46         |
+| stats_g/mean       | 0.75040215 |
+| stats_g/std        | 0.11820922 |
+| stats_o/mean       | 0.18153046 |
+| stats_o/std        | 0.08054454 |
+| test/episode       | 940.0      |
+| test/mean_Q        | -19.691143 |
+| test/success_rate  | 0.2        |
+| train/episode      | 4700.0     |
+| train/mean_Q       | -22.197124 |
+| train/success_rate | 0.07       |
+-----------------------------------
+New best success rate: 0.2. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+------------------------------------
+| epoch              | 47          |
+| stats_g/mean       | 0.7506008   |
+| stats_g/std        | 0.118400574 |
+| stats_o/mean       | 0.18155836  |
+| stats_o/std        | 0.08063195  |
+| test/episode       | 960.0       |
+| test/mean_Q        | -16.344168  |
+| test/success_rate  | 0.0         |
+| train/episode      | 4800.0      |
+| train/mean_Q       | -22.467937  |
+| train/success_rate | 0.06        |
+------------------------------------
+-----------------------------------
+| epoch              | 48         |
+| stats_g/mean       | 0.7509928  |
+| stats_g/std        | 0.11842451 |
+| stats_o/mean       | 0.18177614 |
+| stats_o/std        | 0.08069336 |
+| test/episode       | 980.0      |
+| test/mean_Q        | -18.017529 |
+| test/success_rate  | 0.0        |
+| train/episode      | 4900.0     |
+| train/mean_Q       | -21.169065 |
+| train/success_rate | 0.07       |
+-----------------------------------
+------------------------------------
+| epoch              | 49          |
+| stats_g/mean       | 0.75132793  |
+| stats_g/std        | 0.11859677  |
+| stats_o/mean       | 0.18190846  |
+| stats_o/std        | 0.080815345 |
+| test/episode       | 1000.0      |
+| test/mean_Q        | -17.952957  |
+| test/success_rate  | 0.15        |
+| train/episode      | 5000.0      |
+| train/mean_Q       | -19.828995  |
+| train/success_rate | 0.07        |
+------------------------------------
+-----------------------------------
+| epoch              | 50         |
+| stats_g/mean       | 0.75155926 |
+| stats_g/std        | 0.11873237 |
+| stats_o/mean       | 0.18211551 |
+| stats_o/std        | 0.08087208 |
+| test/episode       | 1020.0     |
+| test/mean_Q        | -15.288002 |
+| test/success_rate  | 0.2        |
+| train/episode      | 5100.0     |
+| train/mean_Q       | -19.439743 |
+| train/success_rate | 0.04       |
+-----------------------------------
+New best success rate: 0.2. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_50.pkl ...
+------------------------------------
+| epoch              | 51          |
+| stats_g/mean       | 0.75172806  |
+| stats_g/std        | 0.119284965 |
+| stats_o/mean       | 0.18223083  |
+| stats_o/std        | 0.08122612  |
+| test/episode       | 1040.0      |
+| test/mean_Q        | -18.520601  |
+| test/success_rate  | 0.1         |
+| train/episode      | 5200.0      |
+| train/mean_Q       | -19.242712  |
+| train/success_rate | 0.06        |
+------------------------------------
+-----------------------------------
+| epoch              | 52         |
+| stats_g/mean       | 0.75187474 |
+| stats_g/std        | 0.11950398 |
+| stats_o/mean       | 0.18236265 |
+| stats_o/std        | 0.08130234 |
+| test/episode       | 1060.0     |
+| test/mean_Q        | -17.828194 |
+| test/success_rate  | 0.15       |
+| train/episode      | 5300.0     |
+| train/mean_Q       | -20.358238 |
+| train/success_rate | 0.06       |
+-----------------------------------
+------------------------------------
+| epoch              | 53          |
+| stats_g/mean       | 0.7520905   |
+| stats_g/std        | 0.119680695 |
+| stats_o/mean       | 0.1824169   |
+| stats_o/std        | 0.08134986  |
+| test/episode       | 1080.0      |
+| test/mean_Q        | -14.913251  |
+| test/success_rate  | 0.35        |
+| train/episode      | 5400.0      |
+| train/mean_Q       | -20.433495  |
+| train/success_rate | 0.08        |
+------------------------------------
+New best success rate: 0.35. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+------------------------------------
+| epoch              | 54          |
+| stats_g/mean       | 0.7522929   |
+| stats_g/std        | 0.119663216 |
+| stats_o/mean       | 0.18252583  |
+| stats_o/std        | 0.08132447  |
+| test/episode       | 1100.0      |
+| test/mean_Q        | -16.316925  |
+| test/success_rate  | 0.2         |
+| train/episode      | 5500.0      |
+| train/mean_Q       | -19.328247  |
+| train/success_rate | 0.08        |
+------------------------------------
+------------------------------------
+| epoch              | 55          |
+| stats_g/mean       | 0.75231075  |
+| stats_g/std        | 0.12004331  |
+| stats_o/mean       | 0.18248756  |
+| stats_o/std        | 0.081528604 |
+| test/episode       | 1120.0      |
+| test/mean_Q        | -18.689793  |
+| test/success_rate  | 0.05        |
+| train/episode      | 5600.0      |
+| train/mean_Q       | -21.100052  |
+| train/success_rate | 0.04        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_55.pkl ...
+------------------------------------
+| epoch              | 56          |
+| stats_g/mean       | 0.7522958   |
+| stats_g/std        | 0.12062528  |
+| stats_o/mean       | 0.18246405  |
+| stats_o/std        | 0.082016185 |
+| test/episode       | 1140.0      |
+| test/mean_Q        | -20.201267  |
+| test/success_rate  | 0.15        |
+| train/episode      | 5700.0      |
+| train/mean_Q       | -21.929155  |
+| train/success_rate | 0.08        |
+------------------------------------
+------------------------------------
+| epoch              | 57          |
+| stats_g/mean       | 0.7523847   |
+| stats_g/std        | 0.12084157  |
+| stats_o/mean       | 0.18245487  |
+| stats_o/std        | 0.082049936 |
+| test/episode       | 1160.0      |
+| test/mean_Q        | -21.64489   |
+| test/success_rate  | 0.05        |
+| train/episode      | 5800.0      |
+| train/mean_Q       | -21.407581  |
+| train/success_rate | 0.06        |
+------------------------------------
+------------------------------------
+| epoch              | 58          |
+| stats_g/mean       | 0.7523906   |
+| stats_g/std        | 0.121014535 |
+| stats_o/mean       | 0.18246052  |
+| stats_o/std        | 0.08223554  |
+| test/episode       | 1180.0      |
+| test/mean_Q        | -18.138409  |
+| test/success_rate  | 0.2         |
+| train/episode      | 5900.0      |
+| train/mean_Q       | -22.777935  |
+| train/success_rate | 0.06        |
+------------------------------------
+------------------------------------
+| epoch              | 59          |
+| stats_g/mean       | 0.75253844  |
+| stats_g/std        | 0.12114801  |
+| stats_o/mean       | 0.18252638  |
+| stats_o/std        | 0.082467526 |
+| test/episode       | 1200.0      |
+| test/mean_Q        | -19.610304  |
+| test/success_rate  | 0.15        |
+| train/episode      | 6000.0      |
+| train/mean_Q       | -23.229456  |
+| train/success_rate | 0.06        |
+------------------------------------
+-----------------------------------
+| epoch              | 60         |
+| stats_g/mean       | 0.75258523 |
+| stats_g/std        | 0.12152627 |
+| stats_o/mean       | 0.18252867 |
+| stats_o/std        | 0.08277099 |
+| test/episode       | 1220.0     |
+| test/mean_Q        | -17.18269  |
+| test/success_rate  | 0.25       |
+| train/episode      | 6100.0     |
+| train/mean_Q       | -22.881348 |
+| train/success_rate | 0.1        |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_60.pkl ...
+-----------------------------------
+| epoch              | 61         |
+| stats_g/mean       | 0.7527065  |
+| stats_g/std        | 0.12153419 |
+| stats_o/mean       | 0.18254782 |
+| stats_o/std        | 0.08283219 |
+| test/episode       | 1240.0     |
+| test/mean_Q        | -21.995325 |
+| test/success_rate  | 0.05       |
+| train/episode      | 6200.0     |
+| train/mean_Q       | -21.64704  |
+| train/success_rate | 0.11       |
+-----------------------------------
+-----------------------------------
+| epoch              | 62         |
+| stats_g/mean       | 0.75290424 |
+| stats_g/std        | 0.12142247 |
+| stats_o/mean       | 0.1826732  |
+| stats_o/std        | 0.08277713 |
+| test/episode       | 1260.0     |
+| test/mean_Q        | -22.273846 |
+| test/success_rate  | 0.05       |
+| train/episode      | 6300.0     |
+| train/mean_Q       | -21.901217 |
+| train/success_rate | 0.14       |
+-----------------------------------
+------------------------------------
+| epoch              | 63          |
+| stats_g/mean       | 0.7530673   |
+| stats_g/std        | 0.121359445 |
+| stats_o/mean       | 0.18273422  |
+| stats_o/std        | 0.082760274 |
+| test/episode       | 1280.0      |
+| test/mean_Q        | -20.228045  |
+| test/success_rate  | 0.1         |
+| train/episode      | 6400.0      |
+| train/mean_Q       | -23.513681  |
+| train/success_rate | 0.06        |
+------------------------------------
+-----------------------------------
+| epoch              | 64         |
+| stats_g/mean       | 0.75325614 |
+| stats_g/std        | 0.12141711 |
+| stats_o/mean       | 0.18278885 |
+| stats_o/std        | 0.08298161 |
+| test/episode       | 1300.0     |
+| test/mean_Q        | -17.004206 |
+| test/success_rate  | 0.25       |
+| train/episode      | 6500.0     |
+| train/mean_Q       | -24.450031 |
+| train/success_rate | 0.06       |
+-----------------------------------
+-----------------------------------
+| epoch              | 65         |
+| stats_g/mean       | 0.7534452  |
+| stats_g/std        | 0.12156426 |
+| stats_o/mean       | 0.18281949 |
+| stats_o/std        | 0.08297866 |
+| test/episode       | 1320.0     |
+| test/mean_Q        | -18.59898  |
+| test/success_rate  | 0.2        |
+| train/episode      | 6600.0     |
+| train/mean_Q       | -25.271137 |
+| train/success_rate | 0.07       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_65.pkl ...
+-----------------------------------
+| epoch              | 66         |
+| stats_g/mean       | 0.7536072  |
+| stats_g/std        | 0.12154034 |
+| stats_o/mean       | 0.18291248 |
+| stats_o/std        | 0.08295813 |
+| test/episode       | 1340.0     |
+| test/mean_Q        | -20.387629 |
+| test/success_rate  | 0.15       |
+| train/episode      | 6700.0     |
+| train/mean_Q       | -24.82278  |
+| train/success_rate | 0.09       |
+-----------------------------------
+------------------------------------
+| epoch              | 67          |
+| stats_g/mean       | 0.7537777   |
+| stats_g/std        | 0.121542834 |
+| stats_o/mean       | 0.1830466   |
+| stats_o/std        | 0.08308918  |
+| test/episode       | 1360.0      |
+| test/mean_Q        | -19.397762  |
+| test/success_rate  | 0.2         |
+| train/episode      | 6800.0      |
+| train/mean_Q       | -23.789757  |
+| train/success_rate | 0.1         |
+------------------------------------
+------------------------------------
+| epoch              | 68          |
+| stats_g/mean       | 0.7539754   |
+| stats_g/std        | 0.121567406 |
+| stats_o/mean       | 0.18313287  |
+| stats_o/std        | 0.08315519  |
+| test/episode       | 1380.0      |
+| test/mean_Q        | -17.806164  |
+| test/success_rate  | 0.05        |
+| train/episode      | 6900.0      |
+| train/mean_Q       | -25.444155  |
+| train/success_rate | 0.05        |
+------------------------------------
+------------------------------------
+| epoch              | 69          |
+| stats_g/mean       | 0.7541609   |
+| stats_g/std        | 0.121554576 |
+| stats_o/mean       | 0.18320635  |
+| stats_o/std        | 0.08354429  |
+| test/episode       | 1400.0      |
+| test/mean_Q        | -18.680334  |
+| test/success_rate  | 0.3         |
+| train/episode      | 7000.0      |
+| train/mean_Q       | -23.61159   |
+| train/success_rate | 0.11        |
+------------------------------------
+-----------------------------------
+| epoch              | 70         |
+| stats_g/mean       | 0.75417525 |
+| stats_g/std        | 0.12156713 |
+| stats_o/mean       | 0.1832052  |
+| stats_o/std        | 0.08353056 |
+| test/episode       | 1420.0     |
+| test/mean_Q        | -21.046774 |
+| test/success_rate  | 0.2        |
+| train/episode      | 7100.0     |
+| train/mean_Q       | -23.84401  |
+| train/success_rate | 0.15       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_70.pkl ...
+-----------------------------------
+| epoch              | 71         |
+| stats_g/mean       | 0.7543526  |
+| stats_g/std        | 0.12162751 |
+| stats_o/mean       | 0.18330675 |
+| stats_o/std        | 0.0837216  |
+| test/episode       | 1440.0     |
+| test/mean_Q        | -23.719324 |
+| test/success_rate  | 0.15       |
+| train/episode      | 7200.0     |
+| train/mean_Q       | -24.131485 |
+| train/success_rate | 0.16       |
+-----------------------------------
+-----------------------------------
+| epoch              | 72         |
+| stats_g/mean       | 0.7546401  |
+| stats_g/std        | 0.12162391 |
+| stats_o/mean       | 0.1834331  |
+| stats_o/std        | 0.08384299 |
+| test/episode       | 1460.0     |
+| test/mean_Q        | -19.060846 |
+| test/success_rate  | 0.3        |
+| train/episode      | 7300.0     |
+| train/mean_Q       | -24.484201 |
+| train/success_rate | 0.16       |
+-----------------------------------
+-----------------------------------
+| epoch              | 73         |
+| stats_g/mean       | 0.7547071  |
+| stats_g/std        | 0.12154875 |
+| stats_o/mean       | 0.18355075 |
+| stats_o/std        | 0.08380712 |
+| test/episode       | 1480.0     |
+| test/mean_Q        | -15.839354 |
+| test/success_rate  | 0.3        |
+| train/episode      | 7400.0     |
+| train/mean_Q       | -22.869661 |
+| train/success_rate | 0.16       |
+-----------------------------------
+-----------------------------------
+| epoch              | 74         |
+| stats_g/mean       | 0.7549513  |
+| stats_g/std        | 0.12159345 |
+| stats_o/mean       | 0.18369718 |
+| stats_o/std        | 0.0838252  |
+| test/episode       | 1500.0     |
+| test/mean_Q        | -14.788297 |
+| test/success_rate  | 0.3        |
+| train/episode      | 7500.0     |
+| train/mean_Q       | -25.498144 |
+| train/success_rate | 0.09       |
+-----------------------------------
+------------------------------------
+| epoch              | 75          |
+| stats_g/mean       | 0.75501674  |
+| stats_g/std        | 0.121686645 |
+| stats_o/mean       | 0.18375991  |
+| stats_o/std        | 0.083920546 |
+| test/episode       | 1520.0      |
+| test/mean_Q        | -21.053867  |
+| test/success_rate  | 0.2         |
+| train/episode      | 7600.0      |
+| train/mean_Q       | -23.979282  |
+| train/success_rate | 0.11        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_75.pkl ...
+-----------------------------------
+| epoch              | 76         |
+| stats_g/mean       | 0.7552581  |
+| stats_g/std        | 0.12171761 |
+| stats_o/mean       | 0.18385635 |
+| stats_o/std        | 0.08389565 |
+| test/episode       | 1540.0     |
+| test/mean_Q        | -18.49223  |
+| test/success_rate  | 0.1        |
+| train/episode      | 7700.0     |
+| train/mean_Q       | -25.603384 |
+| train/success_rate | 0.15       |
+-----------------------------------
+-----------------------------------
+| epoch              | 77         |
+| stats_g/mean       | 0.75537753 |
+| stats_g/std        | 0.12168064 |
+| stats_o/mean       | 0.18398224 |
+| stats_o/std        | 0.0838643  |
+| test/episode       | 1560.0     |
+| test/mean_Q        | -20.587841 |
+| test/success_rate  | 0.3        |
+| train/episode      | 7800.0     |
+| train/mean_Q       | -25.09115  |
+| train/success_rate | 0.12       |
+-----------------------------------
+-----------------------------------
+| epoch              | 78         |
+| stats_g/mean       | 0.7555642  |
+| stats_g/std        | 0.12172829 |
+| stats_o/mean       | 0.18407543 |
+| stats_o/std        | 0.08397788 |
+| test/episode       | 1580.0     |
+| test/mean_Q        | -19.356522 |
+| test/success_rate  | 0.3        |
+| train/episode      | 7900.0     |
+| train/mean_Q       | -26.545176 |
+| train/success_rate | 0.08       |
+-----------------------------------
+------------------------------------
+| epoch              | 79          |
+| stats_g/mean       | 0.75572157  |
+| stats_g/std        | 0.121776916 |
+| stats_o/mean       | 0.18417424  |
+| stats_o/std        | 0.08407796  |
+| test/episode       | 1600.0      |
+| test/mean_Q        | -17.839436  |
+| test/success_rate  | 0.4         |
+| train/episode      | 8000.0      |
+| train/mean_Q       | -25.720554  |
+| train/success_rate | 0.15        |
+------------------------------------
+New best success rate: 0.4. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+------------------------------------
+| epoch              | 80          |
+| stats_g/mean       | 0.7559316   |
+| stats_g/std        | 0.121783346 |
+| stats_o/mean       | 0.18429951  |
+| stats_o/std        | 0.08409753  |
+| test/episode       | 1620.0      |
+| test/mean_Q        | -20.556656  |
+| test/success_rate  | 0.3         |
+| train/episode      | 8100.0      |
+| train/mean_Q       | -25.794378  |
+| train/success_rate | 0.05        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_80.pkl ...
+------------------------------------
+| epoch              | 81          |
+| stats_g/mean       | 0.75613904  |
+| stats_g/std        | 0.12179082  |
+| stats_o/mean       | 0.18448246  |
+| stats_o/std        | 0.084241636 |
+| test/episode       | 1640.0      |
+| test/mean_Q        | -21.369167  |
+| test/success_rate  | 0.25        |
+| train/episode      | 8200.0      |
+| train/mean_Q       | -25.907663  |
+| train/success_rate | 0.13        |
+------------------------------------
+------------------------------------
+| epoch              | 82          |
+| stats_g/mean       | 0.75633353  |
+| stats_g/std        | 0.12178727  |
+| stats_o/mean       | 0.18457215  |
+| stats_o/std        | 0.084278196 |
+| test/episode       | 1660.0      |
+| test/mean_Q        | -22.504866  |
+| test/success_rate  | 0.3         |
+| train/episode      | 8300.0      |
+| train/mean_Q       | -25.063393  |
+| train/success_rate | 0.18        |
+------------------------------------
+-----------------------------------
+| epoch              | 83         |
+| stats_g/mean       | 0.7564638  |
+| stats_g/std        | 0.12179127 |
+| stats_o/mean       | 0.1846674  |
+| stats_o/std        | 0.08436591 |
+| test/episode       | 1680.0     |
+| test/mean_Q        | -19.925816 |
+| test/success_rate  | 0.2        |
+| train/episode      | 8400.0     |
+| train/mean_Q       | -26.71138  |
+| train/success_rate | 0.07       |
+-----------------------------------
+-----------------------------------
+| epoch              | 84         |
+| stats_g/mean       | 0.7565916  |
+| stats_g/std        | 0.12173421 |
+| stats_o/mean       | 0.18475273 |
+| stats_o/std        | 0.08426442 |
+| test/episode       | 1700.0     |
+| test/mean_Q        | -17.071096 |
+| test/success_rate  | 0.45       |
+| train/episode      | 8500.0     |
+| train/mean_Q       | -25.204365 |
+| train/success_rate | 0.16       |
+-----------------------------------
+New best success rate: 0.45. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+------------------------------------
+| epoch              | 85          |
+| stats_g/mean       | 0.75676185  |
+| stats_g/std        | 0.121702194 |
+| stats_o/mean       | 0.18486828  |
+| stats_o/std        | 0.084212445 |
+| test/episode       | 1720.0      |
+| test/mean_Q        | -15.666684  |
+| test/success_rate  | 0.45        |
+| train/episode      | 8600.0      |
+| train/mean_Q       | -25.249382  |
+| train/success_rate | 0.17        |
+------------------------------------
+New best success rate: 0.45. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_85.pkl ...
+-----------------------------------
+| epoch              | 86         |
+| stats_g/mean       | 0.7569299  |
+| stats_g/std        | 0.12171695 |
+| stats_o/mean       | 0.18498647 |
+| stats_o/std        | 0.08429617 |
+| test/episode       | 1740.0     |
+| test/mean_Q        | -21.925108 |
+| test/success_rate  | 0.3        |
+| train/episode      | 8700.0     |
+| train/mean_Q       | -27.222988 |
+| train/success_rate | 0.17       |
+-----------------------------------
+------------------------------------
+| epoch              | 87          |
+| stats_g/mean       | 0.75704646  |
+| stats_g/std        | 0.1217737   |
+| stats_o/mean       | 0.18511647  |
+| stats_o/std        | 0.084416114 |
+| test/episode       | 1760.0      |
+| test/mean_Q        | -15.535414  |
+| test/success_rate  | 0.5         |
+| train/episode      | 8800.0      |
+| train/mean_Q       | -26.327919  |
+| train/success_rate | 0.15        |
+------------------------------------
+New best success rate: 0.5. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+-----------------------------------
+| epoch              | 88         |
+| stats_g/mean       | 0.75721955 |
+| stats_g/std        | 0.12175051 |
+| stats_o/mean       | 0.18524101 |
+| stats_o/std        | 0.0844471  |
+| test/episode       | 1780.0     |
+| test/mean_Q        | -17.545883 |
+| test/success_rate  | 0.3        |
+| train/episode      | 8900.0     |
+| train/mean_Q       | -26.01557  |
+| train/success_rate | 0.16       |
+-----------------------------------
+------------------------------------
+| epoch              | 89          |
+| stats_g/mean       | 0.7574013   |
+| stats_g/std        | 0.12176874  |
+| stats_o/mean       | 0.18537529  |
+| stats_o/std        | 0.084620565 |
+| test/episode       | 1800.0      |
+| test/mean_Q        | -17.555685  |
+| test/success_rate  | 0.55        |
+| train/episode      | 9000.0      |
+| train/mean_Q       | -27.305017  |
+| train/success_rate | 0.11        |
+------------------------------------
+New best success rate: 0.55. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+-----------------------------------
+| epoch              | 90         |
+| stats_g/mean       | 0.757577   |
+| stats_g/std        | 0.12177628 |
+| stats_o/mean       | 0.18550593 |
+| stats_o/std        | 0.0847057  |
+| test/episode       | 1820.0     |
+| test/mean_Q        | -17.276754 |
+| test/success_rate  | 0.3        |
+| train/episode      | 9100.0     |
+| train/mean_Q       | -28.047405 |
+| train/success_rate | 0.09       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_90.pkl ...
+------------------------------------
+| epoch              | 91          |
+| stats_g/mean       | 0.7575705   |
+| stats_g/std        | 0.121752344 |
+| stats_o/mean       | 0.18556365  |
+| stats_o/std        | 0.08467284  |
+| test/episode       | 1840.0      |
+| test/mean_Q        | -17.88195   |
+| test/success_rate  | 0.4         |
+| train/episode      | 9200.0      |
+| train/mean_Q       | -26.77578   |
+| train/success_rate | 0.15        |
+------------------------------------
+------------------------------------
+| epoch              | 92          |
+| stats_g/mean       | 0.7577868   |
+| stats_g/std        | 0.121731706 |
+| stats_o/mean       | 0.18573733  |
+| stats_o/std        | 0.08465846  |
+| test/episode       | 1860.0      |
+| test/mean_Q        | -21.448494  |
+| test/success_rate  | 0.35        |
+| train/episode      | 9300.0      |
+| train/mean_Q       | -27.61776   |
+| train/success_rate | 0.15        |
+------------------------------------
+-----------------------------------
+| epoch              | 93         |
+| stats_g/mean       | 0.7578911  |
+| stats_g/std        | 0.12177562 |
+| stats_o/mean       | 0.1858406  |
+| stats_o/std        | 0.08474005 |
+| test/episode       | 1880.0     |
+| test/mean_Q        | -20.660063 |
+| test/success_rate  | 0.2        |
+| train/episode      | 9400.0     |
+| train/mean_Q       | -27.7278   |
+| train/success_rate | 0.09       |
+-----------------------------------
+------------------------------------
+| epoch              | 94          |
+| stats_g/mean       | 0.75799054  |
+| stats_g/std        | 0.121798344 |
+| stats_o/mean       | 0.18594114  |
+| stats_o/std        | 0.08488954  |
+| test/episode       | 1900.0      |
+| test/mean_Q        | -19.473108  |
+| test/success_rate  | 0.35        |
+| train/episode      | 9500.0      |
+| train/mean_Q       | -25.979603  |
+| train/success_rate | 0.16        |
+------------------------------------
+------------------------------------
+| epoch              | 95          |
+| stats_g/mean       | 0.75802785  |
+| stats_g/std        | 0.121749915 |
+| stats_o/mean       | 0.18600817  |
+| stats_o/std        | 0.0848236   |
+| test/episode       | 1920.0      |
+| test/mean_Q        | -22.597254  |
+| test/success_rate  | 0.25        |
+| train/episode      | 9600.0      |
+| train/mean_Q       | -26.124273  |
+| train/success_rate | 0.12        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_95.pkl ...
+-----------------------------------
+| epoch              | 96         |
+| stats_g/mean       | 0.7580579  |
+| stats_g/std        | 0.12170065 |
+| stats_o/mean       | 0.18610887 |
+| stats_o/std        | 0.08480063 |
+| test/episode       | 1940.0     |
+| test/mean_Q        | -20.121603 |
+| test/success_rate  | 0.2        |
+| train/episode      | 9700.0     |
+| train/mean_Q       | -26.663322 |
+| train/success_rate | 0.09       |
+-----------------------------------
+------------------------------------
+| epoch              | 97          |
+| stats_g/mean       | 0.75807863  |
+| stats_g/std        | 0.121598095 |
+| stats_o/mean       | 0.18614021  |
+| stats_o/std        | 0.084849045 |
+| test/episode       | 1960.0      |
+| test/mean_Q        | -14.465991  |
+| test/success_rate  | 0.65        |
+| train/episode      | 9800.0      |
+| train/mean_Q       | -20.888968  |
+| train/success_rate | 0.28        |
+------------------------------------
+New best success rate: 0.65. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+-----------------------------------
+| epoch              | 98         |
+| stats_g/mean       | 0.75807816 |
+| stats_g/std        | 0.12151366 |
+| stats_o/mean       | 0.18617114 |
+| stats_o/std        | 0.08485825 |
+| test/episode       | 1980.0     |
+| test/mean_Q        | -21.551365 |
+| test/success_rate  | 0.35       |
+| train/episode      | 9900.0     |
+| train/mean_Q       | -24.644093 |
+| train/success_rate | 0.1        |
+-----------------------------------
+------------------------------------
+| epoch              | 99          |
+| stats_g/mean       | 0.75808805  |
+| stats_g/std        | 0.121498965 |
+| stats_o/mean       | 0.18625608  |
+| stats_o/std        | 0.0849987   |
+| test/episode       | 2000.0      |
+| test/mean_Q        | -15.796741  |
+| test/success_rate  | 0.55        |
+| train/episode      | 10000.0     |
+| train/mean_Q       | -27.151428  |
+| train/success_rate | 0.07        |
+------------------------------------
+------------------------------------
+| epoch              | 100         |
+| stats_g/mean       | 0.758128    |
+| stats_g/std        | 0.12155956  |
+| stats_o/mean       | 0.18632859  |
+| stats_o/std        | 0.085258186 |
+| test/episode       | 2020.0      |
+| test/mean_Q        | -16.597502  |
+| test/success_rate  | 0.55        |
+| train/episode      | 10100.0     |
+| train/mean_Q       | -25.188206  |
+| train/success_rate | 0.14        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_100.pkl ...
+-----------------------------------
+| epoch              | 101        |
+| stats_g/mean       | 0.758137   |
+| stats_g/std        | 0.12157655 |
+| stats_o/mean       | 0.18638867 |
+| stats_o/std        | 0.08541815 |
+| test/episode       | 2040.0     |
+| test/mean_Q        | -20.101278 |
+| test/success_rate  | 0.35       |
+| train/episode      | 10200.0    |
+| train/mean_Q       | -24.808628 |
+| train/success_rate | 0.14       |
+-----------------------------------
+------------------------------------
+| epoch              | 102         |
+| stats_g/mean       | 0.75819653  |
+| stats_g/std        | 0.121554144 |
+| stats_o/mean       | 0.18644337  |
+| stats_o/std        | 0.08558549  |
+| test/episode       | 2060.0      |
+| test/mean_Q        | -15.930288  |
+| test/success_rate  | 0.55        |
+| train/episode      | 10300.0     |
+| train/mean_Q       | -22.3991    |
+| train/success_rate | 0.2         |
+------------------------------------
+-----------------------------------
+| epoch              | 103        |
+| stats_g/mean       | 0.7582827  |
+| stats_g/std        | 0.12167264 |
+| stats_o/mean       | 0.18651807 |
+| stats_o/std        | 0.08572712 |
+| test/episode       | 2080.0     |
+| test/mean_Q        | -17.626318 |
+| test/success_rate  | 0.45       |
+| train/episode      | 10400.0    |
+| train/mean_Q       | -26.461218 |
+| train/success_rate | 0.1        |
+-----------------------------------
+------------------------------------
+| epoch              | 104         |
+| stats_g/mean       | 0.7582744   |
+| stats_g/std        | 0.12166033  |
+| stats_o/mean       | 0.18655662  |
+| stats_o/std        | 0.085867204 |
+| test/episode       | 2100.0      |
+| test/mean_Q        | -18.85036   |
+| test/success_rate  | 0.4         |
+| train/episode      | 10500.0     |
+| train/mean_Q       | -24.108742  |
+| train/success_rate | 0.13        |
+------------------------------------
+------------------------------------
+| epoch              | 105         |
+| stats_g/mean       | 0.7583155   |
+| stats_g/std        | 0.121724725 |
+| stats_o/mean       | 0.18663059  |
+| stats_o/std        | 0.08609808  |
+| test/episode       | 2120.0      |
+| test/mean_Q        | -17.642765  |
+| test/success_rate  | 0.4         |
+| train/episode      | 10600.0     |
+| train/mean_Q       | -24.281017  |
+| train/success_rate | 0.17        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_105.pkl ...
+-----------------------------------
+| epoch              | 106        |
+| stats_g/mean       | 0.75840807 |
+| stats_g/std        | 0.12175023 |
+| stats_o/mean       | 0.18668224 |
+| stats_o/std        | 0.08622598 |
+| test/episode       | 2140.0     |
+| test/mean_Q        | -15.585095 |
+| test/success_rate  | 0.55       |
+| train/episode      | 10700.0    |
+| train/mean_Q       | -23.83477  |
+| train/success_rate | 0.08       |
+-----------------------------------
+-----------------------------------
+| epoch              | 107        |
+| stats_g/mean       | 0.7583966  |
+| stats_g/std        | 0.12179741 |
+| stats_o/mean       | 0.18670309 |
+| stats_o/std        | 0.0864716  |
+| test/episode       | 2160.0     |
+| test/mean_Q        | -15.768793 |
+| test/success_rate  | 0.5        |
+| train/episode      | 10800.0    |
+| train/mean_Q       | -22.691772 |
+| train/success_rate | 0.09       |
+-----------------------------------
+-----------------------------------
+| epoch              | 108        |
+| stats_g/mean       | 0.75842744 |
+| stats_g/std        | 0.12172409 |
+| stats_o/mean       | 0.18669835 |
+| stats_o/std        | 0.08649121 |
+| test/episode       | 2180.0     |
+| test/mean_Q        | -14.211841 |
+| test/success_rate  | 0.4        |
+| train/episode      | 10900.0    |
+| train/mean_Q       | -21.01809  |
+| train/success_rate | 0.11       |
+-----------------------------------
+-----------------------------------
+| epoch              | 109        |
+| stats_g/mean       | 0.758432   |
+| stats_g/std        | 0.12166227 |
+| stats_o/mean       | 0.18668912 |
+| stats_o/std        | 0.08652559 |
+| test/episode       | 2200.0     |
+| test/mean_Q        | -15.680153 |
+| test/success_rate  | 0.15       |
+| train/episode      | 11000.0    |
+| train/mean_Q       | -21.535908 |
+| train/success_rate | 0.14       |
+-----------------------------------
+-----------------------------------
+| epoch              | 110        |
+| stats_g/mean       | 0.7583365  |
+| stats_g/std        | 0.12165579 |
+| stats_o/mean       | 0.18663827 |
+| stats_o/std        | 0.08660261 |
+| test/episode       | 2220.0     |
+| test/mean_Q        | -19.899324 |
+| test/success_rate  | 0.25       |
+| train/episode      | 11100.0    |
+| train/mean_Q       | -22.440672 |
+| train/success_rate | 0.09       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_110.pkl ...
+------------------------------------
+| epoch              | 111         |
+| stats_g/mean       | 0.7583807   |
+| stats_g/std        | 0.121639766 |
+| stats_o/mean       | 0.18665032  |
+| stats_o/std        | 0.086763866 |
+| test/episode       | 2240.0      |
+| test/mean_Q        | -17.30848   |
+| test/success_rate  | 0.3         |
+| train/episode      | 11200.0     |
+| train/mean_Q       | -23.334114  |
+| train/success_rate | 0.02        |
+------------------------------------
+-----------------------------------
+| epoch              | 112        |
+| stats_g/mean       | 0.7583094  |
+| stats_g/std        | 0.12162495 |
+| stats_o/mean       | 0.18660825 |
+| stats_o/std        | 0.08672874 |
+| test/episode       | 2260.0     |
+| test/mean_Q        | -14.59038  |
+| test/success_rate  | 0.4        |
+| train/episode      | 11300.0    |
+| train/mean_Q       | -21.295666 |
+| train/success_rate | 0.12       |
+-----------------------------------
+-----------------------------------
+| epoch              | 113        |
+| stats_g/mean       | 0.7582023  |
+| stats_g/std        | 0.12164364 |
+| stats_o/mean       | 0.18657665 |
+| stats_o/std        | 0.08673527 |
+| test/episode       | 2280.0     |
+| test/mean_Q        | -17.789108 |
+| test/success_rate  | 0.25       |
+| train/episode      | 11400.0    |
+| train/mean_Q       | -23.031488 |
+| train/success_rate | 0.08       |
+-----------------------------------
+------------------------------------
+| epoch              | 114         |
+| stats_g/mean       | 0.7582237   |
+| stats_g/std        | 0.121652395 |
+| stats_o/mean       | 0.18661389  |
+| stats_o/std        | 0.086745694 |
+| test/episode       | 2300.0      |
+| test/mean_Q        | -16.233326  |
+| test/success_rate  | 0.35        |
+| train/episode      | 11500.0     |
+| train/mean_Q       | -26.27949   |
+| train/success_rate | 0.07        |
+------------------------------------
+------------------------------------
+| epoch              | 115         |
+| stats_g/mean       | 0.7581964   |
+| stats_g/std        | 0.12167331  |
+| stats_o/mean       | 0.18663093  |
+| stats_o/std        | 0.086858146 |
+| test/episode       | 2320.0      |
+| test/mean_Q        | -16.141176  |
+| test/success_rate  | 0.35        |
+| train/episode      | 11600.0     |
+| train/mean_Q       | -23.844465  |
+| train/success_rate | 0.12        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_115.pkl ...
+-----------------------------------
+| epoch              | 116        |
+| stats_g/mean       | 0.7581336  |
+| stats_g/std        | 0.12171257 |
+| stats_o/mean       | 0.18661779 |
+| stats_o/std        | 0.08708375 |
+| test/episode       | 2340.0     |
+| test/mean_Q        | -15.486092 |
+| test/success_rate  | 0.45       |
+| train/episode      | 11700.0    |
+| train/mean_Q       | -24.887337 |
+| train/success_rate | 0.08       |
+-----------------------------------
+-----------------------------------
+| epoch              | 117        |
+| stats_g/mean       | 0.7581127  |
+| stats_g/std        | 0.12169055 |
+| stats_o/mean       | 0.18660906 |
+| stats_o/std        | 0.08712581 |
+| test/episode       | 2360.0     |
+| test/mean_Q        | -16.098846 |
+| test/success_rate  | 0.4        |
+| train/episode      | 11800.0    |
+| train/mean_Q       | -25.134872 |
+| train/success_rate | 0.08       |
+-----------------------------------
+------------------------------------
+| epoch              | 118         |
+| stats_g/mean       | 0.7580398   |
+| stats_g/std        | 0.121759176 |
+| stats_o/mean       | 0.18655717  |
+| stats_o/std        | 0.08713113  |
+| test/episode       | 2380.0      |
+| test/mean_Q        | -14.905545  |
+| test/success_rate  | 0.6         |
+| train/episode      | 11900.0     |
+| train/mean_Q       | -26.096804  |
+| train/success_rate | 0.08        |
+------------------------------------
+------------------------------------
+| epoch              | 119         |
+| stats_g/mean       | 0.75800127  |
+| stats_g/std        | 0.12191599  |
+| stats_o/mean       | 0.18651307  |
+| stats_o/std        | 0.087342955 |
+| test/episode       | 2400.0      |
+| test/mean_Q        | -19.196032  |
+| test/success_rate  | 0.25        |
+| train/episode      | 12000.0     |
+| train/mean_Q       | -24.475025  |
+| train/success_rate | 0.18        |
+------------------------------------
+-----------------------------------
+| epoch              | 120        |
+| stats_g/mean       | 0.75806284 |
+| stats_g/std        | 0.12196991 |
+| stats_o/mean       | 0.18650955 |
+| stats_o/std        | 0.08740962 |
+| test/episode       | 2420.0     |
+| test/mean_Q        | -15.325758 |
+| test/success_rate  | 0.5        |
+| train/episode      | 12100.0    |
+| train/mean_Q       | -25.221848 |
+| train/success_rate | 0.15       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_120.pkl ...
+-----------------------------------
+| epoch              | 121        |
+| stats_g/mean       | 0.75805146 |
+| stats_g/std        | 0.12203333 |
+| stats_o/mean       | 0.18651134 |
+| stats_o/std        | 0.08757165 |
+| test/episode       | 2440.0     |
+| test/mean_Q        | -13.606122 |
+| test/success_rate  | 0.55       |
+| train/episode      | 12200.0    |
+| train/mean_Q       | -26.831432 |
+| train/success_rate | 0.06       |
+-----------------------------------
+-----------------------------------
+| epoch              | 122        |
+| stats_g/mean       | 0.7580714  |
+| stats_g/std        | 0.12209692 |
+| stats_o/mean       | 0.18654163 |
+| stats_o/std        | 0.08775061 |
+| test/episode       | 2460.0     |
+| test/mean_Q        | -20.450325 |
+| test/success_rate  | 0.25       |
+| train/episode      | 12300.0    |
+| train/mean_Q       | -26.76348  |
+| train/success_rate | 0.09       |
+-----------------------------------
+-----------------------------------
+| epoch              | 123        |
+| stats_g/mean       | 0.75808436 |
+| stats_g/std        | 0.12221036 |
+| stats_o/mean       | 0.18654265 |
+| stats_o/std        | 0.08784175 |
+| test/episode       | 2480.0     |
+| test/mean_Q        | -21.183727 |
+| test/success_rate  | 0.2        |
+| train/episode      | 12400.0    |
+| train/mean_Q       | -27.467829 |
+| train/success_rate | 0.11       |
+-----------------------------------
+------------------------------------
+| epoch              | 124         |
+| stats_g/mean       | 0.7581498   |
+| stats_g/std        | 0.12220791  |
+| stats_o/mean       | 0.18656315  |
+| stats_o/std        | 0.087797426 |
+| test/episode       | 2500.0      |
+| test/mean_Q        | -15.428853  |
+| test/success_rate  | 0.65        |
+| train/episode      | 12500.0     |
+| train/mean_Q       | -26.641747  |
+| train/success_rate | 0.17        |
+------------------------------------
+New best success rate: 0.65. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+------------------------------------
+| epoch              | 125         |
+| stats_g/mean       | 0.75814253  |
+| stats_g/std        | 0.122241996 |
+| stats_o/mean       | 0.18657106  |
+| stats_o/std        | 0.08775643  |
+| test/episode       | 2520.0      |
+| test/mean_Q        | -20.633842  |
+| test/success_rate  | 0.45        |
+| train/episode      | 12600.0     |
+| train/mean_Q       | -26.480076  |
+| train/success_rate | 0.13        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_125.pkl ...
+------------------------------------
+| epoch              | 126         |
+| stats_g/mean       | 0.75811535  |
+| stats_g/std        | 0.122293144 |
+| stats_o/mean       | 0.18656518  |
+| stats_o/std        | 0.0877921   |
+| test/episode       | 2540.0      |
+| test/mean_Q        | -20.428694  |
+| test/success_rate  | 0.3         |
+| train/episode      | 12700.0     |
+| train/mean_Q       | -26.489616  |
+| train/success_rate | 0.18        |
+------------------------------------
+------------------------------------
+| epoch              | 127         |
+| stats_g/mean       | 0.75822085  |
+| stats_g/std        | 0.122342475 |
+| stats_o/mean       | 0.1866365   |
+| stats_o/std        | 0.0878189   |
+| test/episode       | 2560.0      |
+| test/mean_Q        | -21.099524  |
+| test/success_rate  | 0.2         |
+| train/episode      | 12800.0     |
+| train/mean_Q       | -25.993048  |
+| train/success_rate | 0.23        |
+------------------------------------
+-----------------------------------
+| epoch              | 128        |
+| stats_g/mean       | 0.75824785 |
+| stats_g/std        | 0.12235839 |
+| stats_o/mean       | 0.18666907 |
+| stats_o/std        | 0.08797321 |
+| test/episode       | 2580.0     |
+| test/mean_Q        | -16.612186 |
+| test/success_rate  | 0.45       |
+| train/episode      | 12900.0    |
+| train/mean_Q       | -27.532183 |
+| train/success_rate | 0.12       |
+-----------------------------------
+-----------------------------------
+| epoch              | 129        |
+| stats_g/mean       | 0.758213   |
+| stats_g/std        | 0.12231528 |
+| stats_o/mean       | 0.18667097 |
+| stats_o/std        | 0.08791225 |
+| test/episode       | 2600.0     |
+| test/mean_Q        | -18.106943 |
+| test/success_rate  | 0.8        |
+| train/episode      | 13000.0    |
+| train/mean_Q       | -25.853228 |
+| train/success_rate | 0.17       |
+-----------------------------------
+New best success rate: 0.8. Saving policy to ../logs/FetchSlide_random_n200/policy_best.pkl ...
+------------------------------------
+| epoch              | 130         |
+| stats_g/mean       | 0.7582318   |
+| stats_g/std        | 0.12231208  |
+| stats_o/mean       | 0.1866823   |
+| stats_o/std        | 0.087937385 |
+| test/episode       | 2620.0      |
+| test/mean_Q        | -21.261225  |
+| test/success_rate  | 0.25        |
+| train/episode      | 13100.0     |
+| train/mean_Q       | -27.824461  |
+| train/success_rate | 0.12        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_130.pkl ...
+------------------------------------
+| epoch              | 131         |
+| stats_g/mean       | 0.7582438   |
+| stats_g/std        | 0.122292005 |
+| stats_o/mean       | 0.18669733  |
+| stats_o/std        | 0.08792657  |
+| test/episode       | 2640.0      |
+| test/mean_Q        | -23.081127  |
+| test/success_rate  | 0.25        |
+| train/episode      | 13200.0     |
+| train/mean_Q       | -27.972034  |
+| train/success_rate | 0.16        |
+------------------------------------
+-----------------------------------
+| epoch              | 132        |
+| stats_g/mean       | 0.75826806 |
+| stats_g/std        | 0.12231334 |
+| stats_o/mean       | 0.18671955 |
+| stats_o/std        | 0.08805029 |
+| test/episode       | 2660.0     |
+| test/mean_Q        | -17.353245 |
+| test/success_rate  | 0.4        |
+| train/episode      | 13300.0    |
+| train/mean_Q       | -28.314049 |
+| train/success_rate | 0.16       |
+-----------------------------------
+------------------------------------
+| epoch              | 133         |
+| stats_g/mean       | 0.7583073   |
+| stats_g/std        | 0.122366376 |
+| stats_o/mean       | 0.18673125  |
+| stats_o/std        | 0.088139236 |
+| test/episode       | 2680.0      |
+| test/mean_Q        | -16.498775  |
+| test/success_rate  | 0.4         |
+| train/episode      | 13400.0     |
+| train/mean_Q       | -29.7219    |
+| train/success_rate | 0.09        |
+------------------------------------
+-----------------------------------
+| epoch              | 134        |
+| stats_g/mean       | 0.75828695 |
+| stats_g/std        | 0.1223442  |
+| stats_o/mean       | 0.18674558 |
+| stats_o/std        | 0.08810868 |
+| test/episode       | 2700.0     |
+| test/mean_Q        | -16.993914 |
+| test/success_rate  | 0.45       |
+| train/episode      | 13500.0    |
+| train/mean_Q       | -27.223845 |
+| train/success_rate | 0.13       |
+-----------------------------------
+------------------------------------
+| epoch              | 135         |
+| stats_g/mean       | 0.7583878   |
+| stats_g/std        | 0.122402996 |
+| stats_o/mean       | 0.18678793  |
+| stats_o/std        | 0.08816861  |
+| test/episode       | 2720.0      |
+| test/mean_Q        | -19.00967   |
+| test/success_rate  | 0.35        |
+| train/episode      | 13600.0     |
+| train/mean_Q       | -28.52719   |
+| train/success_rate | 0.1         |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_135.pkl ...
+-----------------------------------
+| epoch              | 136        |
+| stats_g/mean       | 0.7583781  |
+| stats_g/std        | 0.12240354 |
+| stats_o/mean       | 0.18678848 |
+| stats_o/std        | 0.08829696 |
+| test/episode       | 2740.0     |
+| test/mean_Q        | -17.337105 |
+| test/success_rate  | 0.4        |
+| train/episode      | 13700.0    |
+| train/mean_Q       | -28.274952 |
+| train/success_rate | 0.15       |
+-----------------------------------
+-----------------------------------
+| epoch              | 137        |
+| stats_g/mean       | 0.75839657 |
+| stats_g/std        | 0.12237727 |
+| stats_o/mean       | 0.18680994 |
+| stats_o/std        | 0.08827548 |
+| test/episode       | 2760.0     |
+| test/mean_Q        | -16.34506  |
+| test/success_rate  | 0.4        |
+| train/episode      | 13800.0    |
+| train/mean_Q       | -25.981638 |
+| train/success_rate | 0.24       |
+-----------------------------------
+------------------------------------
+| epoch              | 138         |
+| stats_g/mean       | 0.7584226   |
+| stats_g/std        | 0.122388594 |
+| stats_o/mean       | 0.18682717  |
+| stats_o/std        | 0.088319235 |
+| test/episode       | 2780.0      |
+| test/mean_Q        | -21.223318  |
+| test/success_rate  | 0.3         |
+| train/episode      | 13900.0     |
+| train/mean_Q       | -29.479328  |
+| train/success_rate | 0.11        |
+------------------------------------
+------------------------------------
+| epoch              | 139         |
+| stats_g/mean       | 0.7584873   |
+| stats_g/std        | 0.122363895 |
+| stats_o/mean       | 0.18685612  |
+| stats_o/std        | 0.08829604  |
+| test/episode       | 2800.0      |
+| test/mean_Q        | -16.034742  |
+| test/success_rate  | 0.45        |
+| train/episode      | 14000.0     |
+| train/mean_Q       | -27.953466  |
+| train/success_rate | 0.2         |
+------------------------------------
+------------------------------------
+| epoch              | 140         |
+| stats_g/mean       | 0.7585309   |
+| stats_g/std        | 0.122425586 |
+| stats_o/mean       | 0.18687576  |
+| stats_o/std        | 0.08837857  |
+| test/episode       | 2820.0      |
+| test/mean_Q        | -16.543638  |
+| test/success_rate  | 0.45        |
+| train/episode      | 14100.0     |
+| train/mean_Q       | -31.014734  |
+| train/success_rate | 0.09        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_140.pkl ...
+-----------------------------------
+| epoch              | 141        |
+| stats_g/mean       | 0.7585483  |
+| stats_g/std        | 0.12243741 |
+| stats_o/mean       | 0.18688467 |
+| stats_o/std        | 0.0884039  |
+| test/episode       | 2840.0     |
+| test/mean_Q        | -17.531918 |
+| test/success_rate  | 0.4        |
+| train/episode      | 14200.0    |
+| train/mean_Q       | -28.879028 |
+| train/success_rate | 0.14       |
+-----------------------------------
+-----------------------------------
+| epoch              | 142        |
+| stats_g/mean       | 0.7585787  |
+| stats_g/std        | 0.12242701 |
+| stats_o/mean       | 0.18692087 |
+| stats_o/std        | 0.08845561 |
+| test/episode       | 2860.0     |
+| test/mean_Q        | -18.066326 |
+| test/success_rate  | 0.4        |
+| train/episode      | 14300.0    |
+| train/mean_Q       | -29.370031 |
+| train/success_rate | 0.1        |
+-----------------------------------
+-----------------------------------
+| epoch              | 143        |
+| stats_g/mean       | 0.7585853  |
+| stats_g/std        | 0.12245878 |
+| stats_o/mean       | 0.18692672 |
+| stats_o/std        | 0.08848346 |
+| test/episode       | 2880.0     |
+| test/mean_Q        | -19.153717 |
+| test/success_rate  | 0.35       |
+| train/episode      | 14400.0    |
+| train/mean_Q       | -27.69266  |
+| train/success_rate | 0.14       |
+-----------------------------------
+-----------------------------------
+| epoch              | 144        |
+| stats_g/mean       | 0.75861627 |
+| stats_g/std        | 0.12250474 |
+| stats_o/mean       | 0.18692024 |
+| stats_o/std        | 0.08870906 |
+| test/episode       | 2900.0     |
+| test/mean_Q        | -17.60894  |
+| test/success_rate  | 0.25       |
+| train/episode      | 14500.0    |
+| train/mean_Q       | -28.580654 |
+| train/success_rate | 0.14       |
+-----------------------------------
+-----------------------------------
+| epoch              | 145        |
+| stats_g/mean       | 0.75858426 |
+| stats_g/std        | 0.12250948 |
+| stats_o/mean       | 0.1869088  |
+| stats_o/std        | 0.08873072 |
+| test/episode       | 2920.0     |
+| test/mean_Q        | -19.767294 |
+| test/success_rate  | 0.4        |
+| train/episode      | 14600.0    |
+| train/mean_Q       | -27.608234 |
+| train/success_rate | 0.15       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_145.pkl ...
+------------------------------------
+| epoch              | 146         |
+| stats_g/mean       | 0.7586024   |
+| stats_g/std        | 0.12253512  |
+| stats_o/mean       | 0.18692736  |
+| stats_o/std        | 0.088743106 |
+| test/episode       | 2940.0      |
+| test/mean_Q        | -18.007038  |
+| test/success_rate  | 0.3         |
+| train/episode      | 14700.0     |
+| train/mean_Q       | -29.051346  |
+| train/success_rate | 0.14        |
+------------------------------------
+-----------------------------------
+| epoch              | 147        |
+| stats_g/mean       | 0.7586867  |
+| stats_g/std        | 0.12253651 |
+| stats_o/mean       | 0.18697287 |
+| stats_o/std        | 0.08876702 |
+| test/episode       | 2960.0     |
+| test/mean_Q        | -18.7612   |
+| test/success_rate  | 0.4        |
+| train/episode      | 14800.0    |
+| train/mean_Q       | -27.718227 |
+| train/success_rate | 0.13       |
+-----------------------------------
+-----------------------------------
+| epoch              | 148        |
+| stats_g/mean       | 0.7586667  |
+| stats_g/std        | 0.12259955 |
+| stats_o/mean       | 0.1869709  |
+| stats_o/std        | 0.08885865 |
+| test/episode       | 2980.0     |
+| test/mean_Q        | -18.601463 |
+| test/success_rate  | 0.3        |
+| train/episode      | 14900.0    |
+| train/mean_Q       | -27.214012 |
+| train/success_rate | 0.12       |
+-----------------------------------
+-----------------------------------
+| epoch              | 149        |
+| stats_g/mean       | 0.7587059  |
+| stats_g/std        | 0.12258165 |
+| stats_o/mean       | 0.18698387 |
+| stats_o/std        | 0.08880616 |
+| test/episode       | 3000.0     |
+| test/mean_Q        | -18.59874  |
+| test/success_rate  | 0.35       |
+| train/episode      | 15000.0    |
+| train/mean_Q       | -26.993511 |
+| train/success_rate | 0.14       |
+-----------------------------------
+-----------------------------------
+| epoch              | 150        |
+| stats_g/mean       | 0.7587769  |
+| stats_g/std        | 0.12257174 |
+| stats_o/mean       | 0.18698534 |
+| stats_o/std        | 0.08887126 |
+| test/episode       | 3020.0     |
+| test/mean_Q        | -17.113085 |
+| test/success_rate  | 0.5        |
+| train/episode      | 15100.0    |
+| train/mean_Q       | -27.12328  |
+| train/success_rate | 0.13       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_150.pkl ...
+-----------------------------------
+| epoch              | 151        |
+| stats_g/mean       | 0.7587428  |
+| stats_g/std        | 0.12267537 |
+| stats_o/mean       | 0.18698224 |
+| stats_o/std        | 0.08895574 |
+| test/episode       | 3040.0     |
+| test/mean_Q        | -23.874702 |
+| test/success_rate  | 0.1        |
+| train/episode      | 15200.0    |
+| train/mean_Q       | -28.705835 |
+| train/success_rate | 0.08       |
+-----------------------------------
+-----------------------------------
+| epoch              | 152        |
+| stats_g/mean       | 0.75870466 |
+| stats_g/std        | 0.12274263 |
+| stats_o/mean       | 0.18698624 |
+| stats_o/std        | 0.08909499 |
+| test/episode       | 3060.0     |
+| test/mean_Q        | -20.613718 |
+| test/success_rate  | 0.3        |
+| train/episode      | 15300.0    |
+| train/mean_Q       | -29.490557 |
+| train/success_rate | 0.1        |
+-----------------------------------
+------------------------------------
+| epoch              | 153         |
+| stats_g/mean       | 0.7587182   |
+| stats_g/std        | 0.122777134 |
+| stats_o/mean       | 0.1869773   |
+| stats_o/std        | 0.08930069  |
+| test/episode       | 3080.0      |
+| test/mean_Q        | -20.194128  |
+| test/success_rate  | 0.25        |
+| train/episode      | 15400.0     |
+| train/mean_Q       | -29.368755  |
+| train/success_rate | 0.11        |
+------------------------------------
+------------------------------------
+| epoch              | 154         |
+| stats_g/mean       | 0.75870657  |
+| stats_g/std        | 0.122796915 |
+| stats_o/mean       | 0.18699163  |
+| stats_o/std        | 0.089334294 |
+| test/episode       | 3100.0      |
+| test/mean_Q        | -16.926804  |
+| test/success_rate  | 0.45        |
+| train/episode      | 15500.0     |
+| train/mean_Q       | -27.153685  |
+| train/success_rate | 0.12        |
+------------------------------------
+-----------------------------------
+| epoch              | 155        |
+| stats_g/mean       | 0.75878924 |
+| stats_g/std        | 0.12278996 |
+| stats_o/mean       | 0.18703642 |
+| stats_o/std        | 0.08934331 |
+| test/episode       | 3120.0     |
+| test/mean_Q        | -15.118192 |
+| test/success_rate  | 0.55       |
+| train/episode      | 15600.0    |
+| train/mean_Q       | -28.555052 |
+| train/success_rate | 0.15       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_155.pkl ...
+------------------------------------
+| epoch              | 156         |
+| stats_g/mean       | 0.7588441   |
+| stats_g/std        | 0.12280917  |
+| stats_o/mean       | 0.18708241  |
+| stats_o/std        | 0.089525156 |
+| test/episode       | 3140.0      |
+| test/mean_Q        | -21.544659  |
+| test/success_rate  | 0.15        |
+| train/episode      | 15700.0     |
+| train/mean_Q       | -29.635822  |
+| train/success_rate | 0.05        |
+------------------------------------
+-----------------------------------
+| epoch              | 157        |
+| stats_g/mean       | 0.75878763 |
+| stats_g/std        | 0.12277993 |
+| stats_o/mean       | 0.18705586 |
+| stats_o/std        | 0.08958474 |
+| test/episode       | 3160.0     |
+| test/mean_Q        | -19.644299 |
+| test/success_rate  | 0.25       |
+| train/episode      | 15800.0    |
+| train/mean_Q       | -28.009592 |
+| train/success_rate | 0.09       |
+-----------------------------------
+-----------------------------------
+| epoch              | 158        |
+| stats_g/mean       | 0.7587412  |
+| stats_g/std        | 0.12274932 |
+| stats_o/mean       | 0.18704462 |
+| stats_o/std        | 0.08959048 |
+| test/episode       | 3180.0     |
+| test/mean_Q        | -12.668805 |
+| test/success_rate  | 0.55       |
+| train/episode      | 15900.0    |
+| train/mean_Q       | -28.52941  |
+| train/success_rate | 0.09       |
+-----------------------------------
+-----------------------------------
+| epoch              | 159        |
+| stats_g/mean       | 0.758755   |
+| stats_g/std        | 0.12278562 |
+| stats_o/mean       | 0.18704623 |
+| stats_o/std        | 0.08965043 |
+| test/episode       | 3200.0     |
+| test/mean_Q        | -19.063723 |
+| test/success_rate  | 0.35       |
+| train/episode      | 16000.0    |
+| train/mean_Q       | -30.497637 |
+| train/success_rate | 0.14       |
+-----------------------------------
+------------------------------------
+| epoch              | 160         |
+| stats_g/mean       | 0.75874287  |
+| stats_g/std        | 0.122885786 |
+| stats_o/mean       | 0.18703166  |
+| stats_o/std        | 0.08970933  |
+| test/episode       | 3220.0      |
+| test/mean_Q        | -18.47057   |
+| test/success_rate  | 0.35        |
+| train/episode      | 16100.0     |
+| train/mean_Q       | -30.674034  |
+| train/success_rate | 0.08        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_160.pkl ...
+------------------------------------
+| epoch              | 161         |
+| stats_g/mean       | 0.7587238   |
+| stats_g/std        | 0.122923486 |
+| stats_o/mean       | 0.18702322  |
+| stats_o/std        | 0.08975022  |
+| test/episode       | 3240.0      |
+| test/mean_Q        | -18.984947  |
+| test/success_rate  | 0.45        |
+| train/episode      | 16200.0     |
+| train/mean_Q       | -29.545471  |
+| train/success_rate | 0.14        |
+------------------------------------
+------------------------------------
+| epoch              | 162         |
+| stats_g/mean       | 0.7587712   |
+| stats_g/std        | 0.12300545  |
+| stats_o/mean       | 0.1870379   |
+| stats_o/std        | 0.089872316 |
+| test/episode       | 3260.0      |
+| test/mean_Q        | -18.931261  |
+| test/success_rate  | 0.25        |
+| train/episode      | 16300.0     |
+| train/mean_Q       | -28.813501  |
+| train/success_rate | 0.14        |
+------------------------------------
+------------------------------------
+| epoch              | 163         |
+| stats_g/mean       | 0.7587564   |
+| stats_g/std        | 0.12300033  |
+| stats_o/mean       | 0.18702942  |
+| stats_o/std        | 0.089900054 |
+| test/episode       | 3280.0      |
+| test/mean_Q        | -18.229786  |
+| test/success_rate  | 0.4         |
+| train/episode      | 16400.0     |
+| train/mean_Q       | -28.621466  |
+| train/success_rate | 0.16        |
+------------------------------------
+------------------------------------
+| epoch              | 164         |
+| stats_g/mean       | 0.7587308   |
+| stats_g/std        | 0.123075016 |
+| stats_o/mean       | 0.18704538  |
+| stats_o/std        | 0.09004968  |
+| test/episode       | 3300.0      |
+| test/mean_Q        | -22.097727  |
+| test/success_rate  | 0.4         |
+| train/episode      | 16500.0     |
+| train/mean_Q       | -30.864475  |
+| train/success_rate | 0.09        |
+------------------------------------
+-----------------------------------
+| epoch              | 165        |
+| stats_g/mean       | 0.75874466 |
+| stats_g/std        | 0.12308514 |
+| stats_o/mean       | 0.18706572 |
+| stats_o/std        | 0.09013925 |
+| test/episode       | 3320.0     |
+| test/mean_Q        | -19.494358 |
+| test/success_rate  | 0.3        |
+| train/episode      | 16600.0    |
+| train/mean_Q       | -28.686054 |
+| train/success_rate | 0.09       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_165.pkl ...
+------------------------------------
+| epoch              | 166         |
+| stats_g/mean       | 0.7586996   |
+| stats_g/std        | 0.123101324 |
+| stats_o/mean       | 0.18705854  |
+| stats_o/std        | 0.09018537  |
+| test/episode       | 3340.0      |
+| test/mean_Q        | -15.595935  |
+| test/success_rate  | 0.4         |
+| train/episode      | 16700.0     |
+| train/mean_Q       | -27.1662    |
+| train/success_rate | 0.22        |
+------------------------------------
+-----------------------------------
+| epoch              | 167        |
+| stats_g/mean       | 0.7587359  |
+| stats_g/std        | 0.12318634 |
+| stats_o/mean       | 0.18709025 |
+| stats_o/std        | 0.0902749  |
+| test/episode       | 3360.0     |
+| test/mean_Q        | -20.491251 |
+| test/success_rate  | 0.2        |
+| train/episode      | 16800.0    |
+| train/mean_Q       | -29.696068 |
+| train/success_rate | 0.17       |
+-----------------------------------
+------------------------------------
+| epoch              | 168         |
+| stats_g/mean       | 0.75877374  |
+| stats_g/std        | 0.12315383  |
+| stats_o/mean       | 0.18709873  |
+| stats_o/std        | 0.090367384 |
+| test/episode       | 3380.0      |
+| test/mean_Q        | -19.96393   |
+| test/success_rate  | 0.35        |
+| train/episode      | 16900.0     |
+| train/mean_Q       | -27.100252  |
+| train/success_rate | 0.17        |
+------------------------------------
+------------------------------------
+| epoch              | 169         |
+| stats_g/mean       | 0.7587938   |
+| stats_g/std        | 0.123175144 |
+| stats_o/mean       | 0.18711655  |
+| stats_o/std        | 0.09040867  |
+| test/episode       | 3400.0      |
+| test/mean_Q        | -23.339836  |
+| test/success_rate  | 0.3         |
+| train/episode      | 17000.0     |
+| train/mean_Q       | -27.559168  |
+| train/success_rate | 0.14        |
+------------------------------------
+------------------------------------
+| epoch              | 170         |
+| stats_g/mean       | 0.75882715  |
+| stats_g/std        | 0.12320981  |
+| stats_o/mean       | 0.1871379   |
+| stats_o/std        | 0.090512715 |
+| test/episode       | 3420.0      |
+| test/mean_Q        | -15.205211  |
+| test/success_rate  | 0.35        |
+| train/episode      | 17100.0     |
+| train/mean_Q       | -29.078245  |
+| train/success_rate | 0.12        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_170.pkl ...
+-----------------------------------
+| epoch              | 171        |
+| stats_g/mean       | 0.75886244 |
+| stats_g/std        | 0.12322607 |
+| stats_o/mean       | 0.18717696 |
+| stats_o/std        | 0.0905519  |
+| test/episode       | 3440.0     |
+| test/mean_Q        | -18.657658 |
+| test/success_rate  | 0.25       |
+| train/episode      | 17200.0    |
+| train/mean_Q       | -25.716436 |
+| train/success_rate | 0.16       |
+-----------------------------------
+------------------------------------
+| epoch              | 172         |
+| stats_g/mean       | 0.7588683   |
+| stats_g/std        | 0.123332225 |
+| stats_o/mean       | 0.18719007  |
+| stats_o/std        | 0.090804435 |
+| test/episode       | 3460.0      |
+| test/mean_Q        | -19.581089  |
+| test/success_rate  | 0.35        |
+| train/episode      | 17300.0     |
+| train/mean_Q       | -28.49035   |
+| train/success_rate | 0.09        |
+------------------------------------
+-----------------------------------
+| epoch              | 173        |
+| stats_g/mean       | 0.75888044 |
+| stats_g/std        | 0.12337173 |
+| stats_o/mean       | 0.18720289 |
+| stats_o/std        | 0.09096929 |
+| test/episode       | 3480.0     |
+| test/mean_Q        | -15.615751 |
+| test/success_rate  | 0.45       |
+| train/episode      | 17400.0    |
+| train/mean_Q       | -29.735596 |
+| train/success_rate | 0.09       |
+-----------------------------------
+-----------------------------------
+| epoch              | 174        |
+| stats_g/mean       | 0.75885457 |
+| stats_g/std        | 0.12342616 |
+| stats_o/mean       | 0.1871805  |
+| stats_o/std        | 0.0910493  |
+| test/episode       | 3500.0     |
+| test/mean_Q        | -18.033468 |
+| test/success_rate  | 0.3        |
+| train/episode      | 17500.0    |
+| train/mean_Q       | -28.496948 |
+| train/success_rate | 0.09       |
+-----------------------------------
+------------------------------------
+| epoch              | 175         |
+| stats_g/mean       | 0.7588804   |
+| stats_g/std        | 0.123470515 |
+| stats_o/mean       | 0.18715717  |
+| stats_o/std        | 0.0911527   |
+| test/episode       | 3520.0      |
+| test/mean_Q        | -17.496178  |
+| test/success_rate  | 0.35        |
+| train/episode      | 17600.0     |
+| train/mean_Q       | -26.709343  |
+| train/success_rate | 0.12        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_175.pkl ...
+------------------------------------
+| epoch              | 176         |
+| stats_g/mean       | 0.75888056  |
+| stats_g/std        | 0.123473026 |
+| stats_o/mean       | 0.1871507   |
+| stats_o/std        | 0.09129054  |
+| test/episode       | 3540.0      |
+| test/mean_Q        | -15.619661  |
+| test/success_rate  | 0.35        |
+| train/episode      | 17700.0     |
+| train/mean_Q       | -26.269434  |
+| train/success_rate | 0.15        |
+------------------------------------
+------------------------------------
+| epoch              | 177         |
+| stats_g/mean       | 0.7588699   |
+| stats_g/std        | 0.123509444 |
+| stats_o/mean       | 0.1871602   |
+| stats_o/std        | 0.09127693  |
+| test/episode       | 3560.0      |
+| test/mean_Q        | -17.67774   |
+| test/success_rate  | 0.25        |
+| train/episode      | 17800.0     |
+| train/mean_Q       | -27.348875  |
+| train/success_rate | 0.12        |
+------------------------------------
+------------------------------------
+| epoch              | 178         |
+| stats_g/mean       | 0.7589074   |
+| stats_g/std        | 0.123634994 |
+| stats_o/mean       | 0.18715341  |
+| stats_o/std        | 0.09154788  |
+| test/episode       | 3580.0      |
+| test/mean_Q        | -21.465748  |
+| test/success_rate  | 0.3         |
+| train/episode      | 17900.0     |
+| train/mean_Q       | -29.05738   |
+| train/success_rate | 0.1         |
+------------------------------------
+-----------------------------------
+| epoch              | 179        |
+| stats_g/mean       | 0.7589089  |
+| stats_g/std        | 0.12363752 |
+| stats_o/mean       | 0.18715683 |
+| stats_o/std        | 0.09156478 |
+| test/episode       | 3600.0     |
+| test/mean_Q        | -20.052591 |
+| test/success_rate  | 0.3        |
+| train/episode      | 18000.0    |
+| train/mean_Q       | -27.795147 |
+| train/success_rate | 0.09       |
+-----------------------------------
+------------------------------------
+| epoch              | 180         |
+| stats_g/mean       | 0.75892323  |
+| stats_g/std        | 0.123656064 |
+| stats_o/mean       | 0.18717454  |
+| stats_o/std        | 0.09158996  |
+| test/episode       | 3620.0      |
+| test/mean_Q        | -17.016006  |
+| test/success_rate  | 0.4         |
+| train/episode      | 18100.0     |
+| train/mean_Q       | -27.581793  |
+| train/success_rate | 0.15        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_180.pkl ...
+------------------------------------
+| epoch              | 181         |
+| stats_g/mean       | 0.7589361   |
+| stats_g/std        | 0.123698235 |
+| stats_o/mean       | 0.18718453  |
+| stats_o/std        | 0.091733076 |
+| test/episode       | 3640.0      |
+| test/mean_Q        | -22.163141  |
+| test/success_rate  | 0.15        |
+| train/episode      | 18200.0     |
+| train/mean_Q       | -30.539473  |
+| train/success_rate | 0.09        |
+------------------------------------
+-----------------------------------
+| epoch              | 182        |
+| stats_g/mean       | 0.7589796  |
+| stats_g/std        | 0.12379379 |
+| stats_o/mean       | 0.18720435 |
+| stats_o/std        | 0.09183713 |
+| test/episode       | 3660.0     |
+| test/mean_Q        | -17.387335 |
+| test/success_rate  | 0.4        |
+| train/episode      | 18300.0    |
+| train/mean_Q       | -28.305359 |
+| train/success_rate | 0.14       |
+-----------------------------------
+-----------------------------------
+| epoch              | 183        |
+| stats_g/mean       | 0.7589713  |
+| stats_g/std        | 0.12383005 |
+| stats_o/mean       | 0.18720695 |
+| stats_o/std        | 0.09190862 |
+| test/episode       | 3680.0     |
+| test/mean_Q        | -17.886509 |
+| test/success_rate  | 0.35       |
+| train/episode      | 18400.0    |
+| train/mean_Q       | -26.99308  |
+| train/success_rate | 0.12       |
+-----------------------------------
+------------------------------------
+| epoch              | 184         |
+| stats_g/mean       | 0.7589528   |
+| stats_g/std        | 0.12388601  |
+| stats_o/mean       | 0.1872008   |
+| stats_o/std        | 0.092111155 |
+| test/episode       | 3700.0      |
+| test/mean_Q        | -20.53586   |
+| test/success_rate  | 0.35        |
+| train/episode      | 18500.0     |
+| train/mean_Q       | -28.8822    |
+| train/success_rate | 0.17        |
+------------------------------------
+------------------------------------
+| epoch              | 185         |
+| stats_g/mean       | 0.7589662   |
+| stats_g/std        | 0.123935014 |
+| stats_o/mean       | 0.18720502  |
+| stats_o/std        | 0.09217439  |
+| test/episode       | 3720.0      |
+| test/mean_Q        | -19.764675  |
+| test/success_rate  | 0.35        |
+| train/episode      | 18600.0     |
+| train/mean_Q       | -29.53274   |
+| train/success_rate | 0.16        |
+------------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_185.pkl ...
+------------------------------------
+| epoch              | 186         |
+| stats_g/mean       | 0.7589869   |
+| stats_g/std        | 0.123999916 |
+| stats_o/mean       | 0.18722379  |
+| stats_o/std        | 0.0922412   |
+| test/episode       | 3740.0      |
+| test/mean_Q        | -18.527716  |
+| test/success_rate  | 0.3         |
+| train/episode      | 18700.0     |
+| train/mean_Q       | -31.138742  |
+| train/success_rate | 0.1         |
+------------------------------------
+-----------------------------------
+| epoch              | 187        |
+| stats_g/mean       | 0.7590466  |
+| stats_g/std        | 0.12399102 |
+| stats_o/mean       | 0.1872474  |
+| stats_o/std        | 0.09222834 |
+| test/episode       | 3760.0     |
+| test/mean_Q        | -24.213469 |
+| test/success_rate  | 0.25       |
+| train/episode      | 18800.0    |
+| train/mean_Q       | -29.078728 |
+| train/success_rate | 0.21       |
+-----------------------------------
+-----------------------------------
+| epoch              | 188        |
+| stats_g/mean       | 0.7591069  |
+| stats_g/std        | 0.12396687 |
+| stats_o/mean       | 0.18727778 |
+| stats_o/std        | 0.09225446 |
+| test/episode       | 3780.0     |
+| test/mean_Q        | -19.75906  |
+| test/success_rate  | 0.4        |
+| train/episode      | 18900.0    |
+| train/mean_Q       | -29.912651 |
+| train/success_rate | 0.09       |
+-----------------------------------
+-----------------------------------
+| epoch              | 189        |
+| stats_g/mean       | 0.7591297  |
+| stats_g/std        | 0.12394572 |
+| stats_o/mean       | 0.18728676 |
+| stats_o/std        | 0.09219915 |
+| test/episode       | 3800.0     |
+| test/mean_Q        | -17.217045 |
+| test/success_rate  | 0.45       |
+| train/episode      | 19000.0    |
+| train/mean_Q       | -29.671972 |
+| train/success_rate | 0.1        |
+-----------------------------------
+-----------------------------------
+| epoch              | 190        |
+| stats_g/mean       | 0.7590981  |
+| stats_g/std        | 0.12391315 |
+| stats_o/mean       | 0.18729365 |
+| stats_o/std        | 0.09221087 |
+| test/episode       | 3820.0     |
+| test/mean_Q        | -17.101833 |
+| test/success_rate  | 0.35       |
+| train/episode      | 19100.0    |
+| train/mean_Q       | -26.732515 |
+| train/success_rate | 0.2        |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_190.pkl ...
+------------------------------------
+| epoch              | 191         |
+| stats_g/mean       | 0.7591186   |
+| stats_g/std        | 0.123911835 |
+| stats_o/mean       | 0.18730485  |
+| stats_o/std        | 0.09232646  |
+| test/episode       | 3840.0      |
+| test/mean_Q        | -19.622837  |
+| test/success_rate  | 0.3         |
+| train/episode      | 19200.0     |
+| train/mean_Q       | -28.086472  |
+| train/success_rate | 0.13        |
+------------------------------------
+------------------------------------
+| epoch              | 192         |
+| stats_g/mean       | 0.75910896  |
+| stats_g/std        | 0.12389145  |
+| stats_o/mean       | 0.18729728  |
+| stats_o/std        | 0.092409484 |
+| test/episode       | 3860.0      |
+| test/mean_Q        | -16.048788  |
+| test/success_rate  | 0.6         |
+| train/episode      | 19300.0     |
+| train/mean_Q       | -28.94757   |
+| train/success_rate | 0.14        |
+------------------------------------
+------------------------------------
+| epoch              | 193         |
+| stats_g/mean       | 0.759121    |
+| stats_g/std        | 0.123888426 |
+| stats_o/mean       | 0.18728201  |
+| stats_o/std        | 0.092561305 |
+| test/episode       | 3880.0      |
+| test/mean_Q        | -20.10302   |
+| test/success_rate  | 0.3         |
+| train/episode      | 19400.0     |
+| train/mean_Q       | -28.42191   |
+| train/success_rate | 0.15        |
+------------------------------------
+------------------------------------
+| epoch              | 194         |
+| stats_g/mean       | 0.7591687   |
+| stats_g/std        | 0.12391624  |
+| stats_o/mean       | 0.18729931  |
+| stats_o/std        | 0.092712015 |
+| test/episode       | 3900.0      |
+| test/mean_Q        | -17.486284  |
+| test/success_rate  | 0.4         |
+| train/episode      | 19500.0     |
+| train/mean_Q       | -30.465425  |
+| train/success_rate | 0.13        |
+------------------------------------
+-----------------------------------
+| epoch              | 195        |
+| stats_g/mean       | 0.7591908  |
+| stats_g/std        | 0.12391955 |
+| stats_o/mean       | 0.18731125 |
+| stats_o/std        | 0.09267926 |
+| test/episode       | 3920.0     |
+| test/mean_Q        | -19.181091 |
+| test/success_rate  | 0.4        |
+| train/episode      | 19600.0    |
+| train/mean_Q       | -28.617624 |
+| train/success_rate | 0.16       |
+-----------------------------------
+Saving periodic policy to ../logs/FetchSlide_random_n200/policy_195.pkl ...
+-----------------------------------
+| epoch              | 196        |
+| stats_g/mean       | 0.7591807  |
+| stats_g/std        | 0.12393331 |
+| stats_o/mean       | 0.18732952 |
+| stats_o/std        | 0.0926999  |
+| test/episode       | 3940.0     |
+| test/mean_Q        | -16.052967 |
+| test/success_rate  | 0.6        |
+| train/episode      | 19700.0    |
+| train/mean_Q       | -28.307407 |
+| train/success_rate | 0.15       |
+-----------------------------------
+-----------------------------------
+| epoch              | 197        |
+| stats_g/mean       | 0.75917214 |
+| stats_g/std        | 0.123997   |
+| stats_o/mean       | 0.18735313 |
+| stats_o/std        | 0.09283079 |
+| test/episode       | 3960.0     |
+| test/mean_Q        | -18.379766 |
+| test/success_rate  | 0.4        |
+| train/episode      | 19800.0    |
+| train/mean_Q       | -31.533213 |
+| train/success_rate | 0.1        |
+-----------------------------------
+------------------------------------
+| epoch              | 198         |
+| stats_g/mean       | 0.75921583  |
+| stats_g/std        | 0.12395627  |
+| stats_o/mean       | 0.18738179  |
+| stats_o/std        | 0.0928697   |
+| test/episode       | 3980.0      |
+| test/mean_Q        | -13.1672945 |
+| test/success_rate  | 0.55        |
+| train/episode      | 19900.0     |
+| train/mean_Q       | -27.752014  |
+| train/success_rate | 0.22        |
+------------------------------------
+-----------------------------------
+| epoch              | 199        |
+| stats_g/mean       | 0.75923824 |
+| stats_g/std        | 0.12397811 |
+| stats_o/mean       | 0.18739475 |
+| stats_o/std        | 0.09295566 |
+| test/episode       | 4000.0     |
+| test/mean_Q        | -17.929892 |
+| test/success_rate  | 0.4        |
+| train/episode      | 20000.0    |
+| train/mean_Q       | -27.1506   |
+| train/success_rate | 0.16       |
+-----------------------------------
