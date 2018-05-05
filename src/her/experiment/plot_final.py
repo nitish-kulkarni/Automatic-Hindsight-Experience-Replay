@@ -9,6 +9,7 @@ import glob2
 import argparse
 import pdb
 
+color_p = { 'future':'blue', 'random': 'red','last':'green' }
 
 def smooth_reward_curve(x, y):
     halfwidth = int(np.ceil(len(x) / 60))  # Halfwidth of our smoothing convolution
@@ -81,26 +82,29 @@ for curr_path in paths:
 
     config = replay_strategy
     
+
     if replay_strategy == 'best_k':
-        config = config + str(params['gg_k'])
+        config = 'td-top-' + str(params['gg_k'])
+        if (env_id, params['gg_k']) not in [('FetchSlide-v1',20),('FetchPickAndPlace-v1',40),('FetchPush-v1',1)]: #or replay_strategy=='future':
+            continue
 
-        # Process and smooth data.
-        assert success_rate.shape == epoch.shape
-        x = epoch
-        y = success_rate
-        if args.smooth:
-            x, y = smooth_reward_curve(epoch, success_rate)
-        assert x.shape == y.shape
+    # Process and smooth data.
+    assert success_rate.shape == epoch.shape
+    x = epoch
+    y = success_rate
+    if args.smooth:
+        x, y = smooth_reward_curve(epoch, success_rate)
+    assert x.shape == y.shape
 
-        if env_id not in data:
-            data[env_id] = {}
-        if config not in data[env_id]:
-            data[env_id][config] = []
-        data[env_id][config].append((x, y))
+    if env_id not in data:
+        data[env_id] = {}
+    if config not in data[env_id]:
+        data[env_id][config] = []
+    data[env_id][config].append((x, y))
 
 # Plot data.
 for env_id in sorted(data.keys()):
-    print('exporting {}'.format(env_id))
+    print('exporting {} final'.format(env_id))
     plt.clf()
 
     for config in sorted(data[env_id].keys()):
@@ -108,13 +112,16 @@ for env_id in sorted(data.keys()):
         xs, ys = pad(xs), pad(ys)
         assert xs.shape == ys.shape
 
-        plt.plot(xs[0], np.nanmedian(ys, axis=0), label=config)
-        plt.fill_between(xs[0], np.nanpercentile(ys, 25, axis=0), np.nanpercentile(ys, 75, axis=0), alpha=0.25)
+        if config in color_p:
+            plt.plot(xs[0], np.nanmedian(ys, axis=0), label=config,color=color_p[config])
+        else:
+            plt.plot(xs[0], np.nanmedian(ys, axis=0), label=config,color='black')
+        #plt.fill_between(xs[0], np.nanpercentile(ys, 25, axis=0), np.nanpercentile(ys, 75, axis=0), alpha=0.25)
     plt.title(env_id)
     plt.xlabel('Epoch')
-    plt.ylabel('Median Success Rate')
+    plt.ylabel('Success Rate')
     plt.legend()
-    plt.savefig(os.path.join(args.dir, 'fig_{}.pdf'.format(env_id)))
+    plt.savefig(os.path.join(args.dir, 'fig_{}_final.pdf'.format(env_id)))
 
 
 

@@ -2,13 +2,9 @@ import os
 import matplotlib.pyplot as plt
 import numpy as np
 import json
-import seaborn as sns
-#
-sns.set(palette=sns.color_palette("Set1", n_colors=8, desat=.5))
+import seaborn as sns; sns.set()
 import glob2
 import argparse
-import pdb
-
 
 def smooth_reward_curve(x, y):
     halfwidth = int(np.ceil(len(x) / 60))  # Halfwidth of our smoothing convolution
@@ -38,29 +34,16 @@ def load_results(file):
     return result
 
 
-def pad(xs, value=np.nan):
-    maxlen = np.max([len(x) for x in xs])
-    
-    padded_xs = []
-    for x in xs:
-        if x.shape[0] >= maxlen:
-            padded_xs.append(x)
-    
-        padding = np.ones((maxlen - x.shape[0],) + x.shape[1:]) * value
-        x_padded = np.concatenate([x, padding], axis=0)
-        assert x_padded.shape[1:] == x.shape[1:]
-        assert x_padded.shape[0] == maxlen
-        padded_xs.append(x_padded)
-    return np.array(padded_xs)
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument('dir', type=str)
+#parser.add_argument('--res-dir','',type=str)
 parser.add_argument('--smooth', type=int, default=1)
 args = parser.parse_args()
 
 # Load all data.
 data = {}
+print(args.dir)
 paths = [os.path.abspath(os.path.join(path, '..')) for path in glob2.glob(os.path.join(args.dir, '**', 'progress.csv'))]
 for curr_path in paths:
     if not os.path.isdir(curr_path) or 'GoalGen' in curr_path:
@@ -79,42 +62,42 @@ for curr_path in paths:
     env_id = params['env_name']
     replay_strategy = params['replay_strategy']
 
-    config = replay_strategy
-    
     if replay_strategy == 'best_k':
-        config = config + str(params['gg_k'])
-
-        # Process and smooth data.
+        x = params['gg_k']
+        y_mean = np.mean(success_rate)
+        y_max = np.max(success_rate)
+        yerr = np.std(success_rate)
+    # Process and smooth data.
         assert success_rate.shape == epoch.shape
-        x = epoch
-        y = success_rate
-        if args.smooth:
-            x, y = smooth_reward_curve(epoch, success_rate)
-        assert x.shape == y.shape
-
+        
         if env_id not in data:
-            data[env_id] = {}
-        if config not in data[env_id]:
-            data[env_id][config] = []
-        data[env_id][config].append((x, y))
+            data[env_id] = []
+        data[env_id].append((x, y_mean,yerr,y_max))
 
 # Plot data.
 for env_id in sorted(data.keys()):
-    print('exporting {}'.format(env_id))
+    print('exporting {} mean info'.format(env_id))
     plt.clf()
 
-    for config in sorted(data[env_id].keys()):
-        xs, ys = zip(*data[env_id][config])
-        xs, ys = pad(xs), pad(ys)
-        assert xs.shape == ys.shape
+    data[env_id] = sorted(data[env_id], key=lambda tup: tup[0])
 
-        plt.plot(xs[0], np.nanmedian(ys, axis=0), label=config)
-        plt.fill_between(xs[0], np.nanpercentile(ys, 25, axis=0), np.nanpercentile(ys, 75, axis=0), alpha=0.25)
+    xs = [ x[0] for x in data[env_id]]
+    ys = [ x[1] for x in data[env_id]]
+    err = [ x[2] for x in data[env_id]]
+    y_maxs = [ x[3] for x in data[env_id]]
+
+    plt.errorbar(xs,ys,yerr=err,marker='o', linestyle='-', capsize=2, elinewidth=0.5)
     plt.title(env_id)
-    plt.xlabel('Epoch')
-    plt.ylabel('Median Success Rate')
+    plt.xlabel('k')
+    plt.ylabel('Success Rate')
     plt.legend()
-    plt.savefig(os.path.join(args.dir, 'fig_{}.pdf'.format(env_id)))
+    plt.savefig(os.path.join(args.dir, 'fig_mean_{}.pdf'.format(env_id)))
 
-
-
+    print('exporting {} max info'.format(env_id))
+    plt.clf()
+    plt.plot(xs,y_maxs,marker='o')
+    plt.title(env_id)
+    plt.xlabel('k')
+    plt.ylabel('Max Success Rate')
+    plt.legend()
+    plt.savefig(os.path.join(args.dir, 'fig_max_{}.pdf'.format(env_id)))

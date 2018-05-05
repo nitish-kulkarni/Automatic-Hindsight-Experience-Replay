@@ -9,6 +9,7 @@ import glob2
 import argparse
 import pdb
 
+color_p = { 'future':'blue', 'random': 'red','last':'green' }
 
 def smooth_reward_curve(x, y):
     halfwidth = int(np.ceil(len(x) / 60))  # Halfwidth of our smoothing convolution
@@ -63,7 +64,7 @@ args = parser.parse_args()
 data = {}
 paths = [os.path.abspath(os.path.join(path, '..')) for path in glob2.glob(os.path.join(args.dir, '**', 'progress.csv'))]
 for curr_path in paths:
-    if not os.path.isdir(curr_path) or 'GoalGen' in curr_path:
+    if not os.path.isdir(curr_path):
         print('skipping {}'.format(curr_path))
         continue
     results = load_results(os.path.join(curr_path, 'progress.csv'))
@@ -80,10 +81,9 @@ for curr_path in paths:
     replay_strategy = params['replay_strategy']
 
     config = replay_strategy
-    
-    if replay_strategy == 'best_k':
-        config = config + str(params['gg_k'])
-
+    if replay_strategy == 'generated_k' and params['LAMBDA'] in [0.1]:
+        config = "Generated " + str(params['LAMBDA'])
+        
         # Process and smooth data.
         assert success_rate.shape == epoch.shape
         x = epoch
@@ -97,6 +97,7 @@ for curr_path in paths:
         if config not in data[env_id]:
             data[env_id][config] = []
         data[env_id][config].append((x, y))
+    
 
 # Plot data.
 for env_id in sorted(data.keys()):
@@ -108,13 +109,14 @@ for env_id in sorted(data.keys()):
         xs, ys = pad(xs), pad(ys)
         assert xs.shape == ys.shape
 
-        plt.plot(xs[0], np.nanmedian(ys, axis=0), label=config)
+        if config in color_p:
+            plt.plot(xs[0], np.nanmedian(ys, axis=0), label=config,color=color_p[config])
+        else:
+            plt.plot(xs[0], np.nanmedian(ys, axis=0), label=config,color='black')
+
         plt.fill_between(xs[0], np.nanpercentile(ys, 25, axis=0), np.nanpercentile(ys, 75, axis=0), alpha=0.25)
     plt.title(env_id)
     plt.xlabel('Epoch')
-    plt.ylabel('Median Success Rate')
+    plt.ylabel('Success Rate')
     plt.legend()
-    plt.savefig(os.path.join(args.dir, 'fig_{}.pdf'.format(env_id)))
-
-
-
+    plt.savefig(os.path.join(args.dir, 'fig_GG_{}.pdf'.format(env_id)))
