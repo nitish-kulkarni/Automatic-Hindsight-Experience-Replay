@@ -145,7 +145,8 @@ def launch(
         'T': params['T'],
         'gg_k': params['gg_k'],
         'replay_strategy': params['replay_strategy'],
-        'reward_fun': config.get_reward_fun(params['make_env'])
+        'reward_fun': config.get_reward_fun(params['make_env']),
+        'd0': params['d0']
     }
 
     eval_params = {
@@ -156,7 +157,8 @@ def launch(
         'T': params['T'],
         'gg_k': params['gg_k'],
         'replay_strategy': params['replay_strategy'],
-        'reward_fun': config.get_reward_fun(params['make_env'])
+        'reward_fun': config.get_reward_fun(params['make_env']),
+        'd0': params['d0']
     }
 
     for name in ['T', 'rollout_batch_size', 'gamma', 'noise_eps', 'random_eps']:

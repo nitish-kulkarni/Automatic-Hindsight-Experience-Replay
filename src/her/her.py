@@ -45,7 +45,12 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
             future_offset = np.random.uniform(size=batch_size) * (T - t_samples)
             future_offset = future_offset.astype(int)
             txn_idxs = (t_samples + 1 + future_offset)[her_indexes]
-        elif replay_strategy in [C.REPLAY_STRATEGY_RANDOM, C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K]:
+        elif replay_strategy in [
+            C.REPLAY_STRATEGY_RANDOM,
+            C.REPLAY_STRATEGY_BEST_K,
+            C.REPLAY_STRATEGY_GEN_K,
+            C.REPLAY_STRATEGY_GEN_K_GMM
+        ]:
             offset = np.random.uniform(size=batch_size) * (T - t_samples)
             txn_idxs = offset.astype(int)[her_indexes]
         elif replay_strategy in [C.REPLAY_STRATEGY_LAST, C.REPLAY_STRATEGY_NONE]:
@@ -53,8 +58,10 @@ def make_sample_her_transitions(replay_strategy, replay_k, reward_fun, gg_k):
         else:
             raise 'Unimplemented replay strategy'
 
-        if replay_strategy in [C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K]:
-            gg_idxs = np.random.randint(gg_k, size=batch_size)[her_indexes]
+        if replay_strategy in [C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K, C.REPLAY_STRATEGY_GEN_K_GMM]:
+            gg_idxs = np.random.randint(gg_k, size=batch_size)
+            gg_idxs = np.random.uniform(size=batch_size) * (gg_k - gg_idxs)
+            gg_idxs = gg_idxs.astype(int)[her_indexes]
             her_goals = episode_batch['gg'][episode_idxs[her_indexes], txn_idxs, gg_idxs]
         else:
             her_goals = episode_batch['ag'][episode_idxs[her_indexes], txn_idxs]

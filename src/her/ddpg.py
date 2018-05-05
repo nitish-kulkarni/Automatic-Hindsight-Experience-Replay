@@ -107,7 +107,7 @@ class DDPG(object):
         buffer_shapes['g'] = (buffer_shapes['g'][0], self.dimg)
         buffer_shapes['ag'] = (self.T+1, self.dimg)
 
-        if self.replay_strategy in [C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K]:
+        if self.replay_strategy in [C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K, C.REPLAY_STRATEGY_GEN_K_GMM]:
             buffer_shapes['gg'] = (self.T, self.gg_k, self.dimg)
 
         buffer_size = (self.buffer_size // self.rollout_batch_size) * self.rollout_batch_size
