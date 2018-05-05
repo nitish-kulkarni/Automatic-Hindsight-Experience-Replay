@@ -164,10 +164,14 @@ class RolloutWorker:
         batch_major_episode = convert_episode_to_batch_major(episode)
 
         if self.replay_strategy == C.REPLAY_STRATEGY_BEST_K:
-            batch_major_episode['gg'] = self.heuristic_top_k_goals(batch_major_episode)
+            gg, gg_idx = self.heuristic_top_k_goals(batch_major_episode)
+            batch_major_episode['gg'] = gg
+            batch_major_episode['gg_idx'] = gg_idx
 
         elif self.replay_strategy == C.REPLAY_STRATEGY_GEN_K_GMM:
-            batch_major_episode['gg'] = self.heuristic_top_k_goals(batch_major_episode, noise=True)
+            gg, gg_idx = self.heuristic_top_k_goals(batch_major_episode, noise=True)
+            batch_major_episode['gg'] = gg
+            batch_major_episode['gg_idx'] = gg_idx
 
         elif self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
             # print("True achieved goal: ")
@@ -210,6 +214,8 @@ class RolloutWorker:
         gg_shape = (self.rollout_batch_size, self.T, self.gg_k, shapes['ag'][-1])
         gg = np.tile(episode['ag'][:, -1, :], (1, self.gg_k * self.T)).reshape(gg_shape)
         ag = episode['ag'].copy()
+
+        gg_idx = np.ones((self.rollout_batch_size, self.T, self.gg_k)) * (self.T - 1)
         for t in range(self.T):
             if noise:
                 sd = self.d0 / (np.sqrt(shapes['ag'][-1]))
@@ -233,11 +239,12 @@ class RolloutWorker:
             future_goals = future_transitions_t['g'].reshape((self.rollout_batch_size, self.T - t, shapes['ag'][-1]))
             for b_idx in range(self.rollout_batch_size):
                 gg[b_idx, t, :gg_size, :] = future_goals[b_idx, top_k_indices[b_idx]]
+                gg_idx[b_idx, t, :gg_size] = top_k_indices[b_idx] + t
 
         if noise:
             episode['ag'] = ag
 
-        return gg
+        return gg, gg_idx
 
     def future_transitions(self, episode, shapes, t):
         n_t = self.T - t
