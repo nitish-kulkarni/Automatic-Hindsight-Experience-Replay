@@ -12,7 +12,7 @@ from her.utils.mpi_moments import mpi_moments
 import her.experiment.config as config
 from her.rollout import RolloutWorker
 from her.utils.misc import mpi_fork
-
+import her.constants as C
 
 def mpi_average(value):
     if value == []:
@@ -33,6 +33,7 @@ def train(policy, rollout_worker, evaluator,
 
     logger.info("Training...")
     best_success_rate = -1
+    all_gg_idxs_mean = []
     for epoch in range(n_epochs):
         # train
         rollout_worker.clear_history()
@@ -42,6 +43,12 @@ def train(policy, rollout_worker, evaluator,
             for _ in range(n_batches):
                 policy.train()
             policy.update_target_net()
+
+        if rollout_worker.replay_strategy in [C.REPLAY_STRATEGY_BEST_K, C.REPLAY_STRATEGY_GEN_K_GMM]:
+            gg_idxs = policy.buffer.buffers['gg_idx'][:policy.buffer.current_size]
+            gg_idxs_mean = gg_idxs.mean(axis=2).mean(axis=0)
+            all_gg_idxs_mean.append(gg_idxs_mean)
+            np.save(os.path.join(logger.get_dir(), 'gg_idxs.npy'), np.stack(all_gg_idxs_mean))
 
         # test
         evaluator.clear_history()
@@ -145,7 +152,8 @@ def launch(
         'T': params['T'],
         'gg_k': params['gg_k'],
         'replay_strategy': params['replay_strategy'],
-        'reward_fun': config.get_reward_fun(params['make_env'])
+        'reward_fun': config.get_reward_fun(params['make_env']),
+        'd0': params['d0']
     }
 
     eval_params = {
@@ -156,7 +164,8 @@ def launch(
         'T': params['T'],
         'gg_k': params['gg_k'],
         'replay_strategy': params['replay_strategy'],
-        'reward_fun': config.get_reward_fun(params['make_env'])
+        'reward_fun': config.get_reward_fun(params['make_env']),
+        'd0': params['d0']
     }
 
     for name in ['T', 'rollout_batch_size', 'gamma', 'noise_eps', 'random_eps']:

@@ -14,7 +14,7 @@ class RolloutWorker:
     @store_args
     def __init__(self, make_env, policy, dims, logger, T, rollout_batch_size=1,
                  exploit=False, use_target_net=False, compute_Q=False, noise_eps=0,
-                 random_eps=0, history_len=100, render=False, gg_k=1, reward_fun=None,
+                 random_eps=0, history_len=100, render=False, gg_k=1, reward_fun=None, d0=0.05,
                  replay_strategy=C.REPLAY_STRATEGY_FUTURE,
                  **kwargs):
         """Rollout worker generates experience by interacting with one or many environments.
@@ -164,7 +164,14 @@ class RolloutWorker:
         batch_major_episode = convert_episode_to_batch_major(episode)
 
         if self.replay_strategy == C.REPLAY_STRATEGY_BEST_K:
-            batch_major_episode['gg'] = self.heuristic_top_k_goals(batch_major_episode)
+            gg, gg_idx = self.heuristic_top_k_goals(batch_major_episode)
+            batch_major_episode['gg'] = gg
+            batch_major_episode['gg_idx'] = gg_idx
+
+        elif self.replay_strategy == C.REPLAY_STRATEGY_GEN_K_GMM:
+            gg, gg_idx = self.heuristic_top_k_goals(batch_major_episode, noise=True)
+            batch_major_episode['gg'] = gg
+            batch_major_episode['gg_idx'] = gg_idx
 
         elif self.replay_strategy == C.REPLAY_STRATEGY_GEN_K:
             # print("True achieved goal: ")
@@ -200,13 +207,19 @@ class RolloutWorker:
         episode_indices = np.array(eidx)
         return tstmp_indices, episode_indices
 
-    def heuristic_top_k_goals(self, episode):
+    def heuristic_top_k_goals(self, episode, noise=False):
         shapes = dict([(key, value.shape) for key, value in episode.items()])
 
         # Initialize generated goals as the last achieved goal
         gg_shape = (self.rollout_batch_size, self.T, self.gg_k, shapes['ag'][-1])
         gg = np.tile(episode['ag'][:, -1, :], (1, self.gg_k * self.T)).reshape(gg_shape)
+        ag = episode['ag'].copy()
+
+        gg_idx = np.ones((self.rollout_batch_size, self.T, self.gg_k)) * (self.T - 1)
         for t in range(self.T):
+            if noise:
+                sd = self.d0 / (np.sqrt(shapes['ag'][-1]))
+                episode['ag'] = ag + np.random.normal(0.0, sd, ag.shape)
             # Create a single "forward pass batch" from all future transitions
             future_transitions_t = self.future_transitions(episode, shapes, t)
             batch_transitions = self.policy.batch_from_transitions(future_transitions_t)
@@ -221,14 +234,17 @@ class RolloutWorker:
                 return self.generate_rollouts()
 
             # Assign the goals from top k TD errors as generated goals
-            # top_k_indices = td_errors.argsort(axis=1)[:, - self.gg_k:]
-            top_k_indices = td_errors.argsort(axis=1)[:, :self.gg_k]
+            top_k_indices = td_errors.argsort(axis=1)[:, - self.gg_k:]
             gg_size = top_k_indices.shape[-1]
             future_goals = future_transitions_t['g'].reshape((self.rollout_batch_size, self.T - t, shapes['ag'][-1]))
             for b_idx in range(self.rollout_batch_size):
                 gg[b_idx, t, :gg_size, :] = future_goals[b_idx, top_k_indices[b_idx]]
+                gg_idx[b_idx, t, :gg_size] = top_k_indices[b_idx] + t
 
-        return gg
+        if noise:
+            episode['ag'] = ag
+
+        return gg, gg_idx
 
     def future_transitions(self, episode, shapes, t):
         n_t = self.T - t
